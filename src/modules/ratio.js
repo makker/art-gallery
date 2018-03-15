@@ -1,5 +1,11 @@
+
+
+export const viewportWidth = function() {
+    return Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+};
+
 const ratio = () => {
-    var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    var w = viewportWidth();
     var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 
     const ratio = w / h;
@@ -7,5 +13,6 @@ const ratio = () => {
 
     return ratioStr;
 }
+
 
 export default ratio;

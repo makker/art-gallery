@@ -1,17 +1,20 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import GridListTile from 'material-ui/GridList/GridListTile';
 import GridListTileBar from 'material-ui/GridList/GridListTileBar';
 import { withStyles } from 'material-ui/styles';
 // import Typography from 'material-ui/Typography';
 
+import { setActivePiece } from '../modules/appState';
+
 const styles = theme => ({
   tileHors: {
     // width: 'auto !important',
     height: '100%',
-    display: 'block',
-    margin: '0 10px',
+    display: 'inline-block',
+    margin: '0 20px',
     justifyContent: 'center',
     justifyItems: 'center',
   },
@@ -39,14 +42,17 @@ const styles = theme => ({
     width: '70%',
     height: 'auto',
   },
+  active: {
+    border: "2px solid white",
+  },
   title: {
     // color: theme.palette.primary.light,
     color: 'white',
-    fontSize: '12px',
+    fontSize: '11px',
     fontWeight: 400,
     textAlign: 'center',
     [theme.breakpoints.up('md')]: {
-      fontSize: '16px',
+      fontSize: '14px',
     },
   },
   titleBar: {
@@ -57,14 +63,26 @@ const styles = theme => ({
   },
 });
 
+const mapStateToProps = state => {
+  // This is not really used
+  return {
+    activeId: state.app.activePiece,
+  };
+}; 
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setActivePiece: setActivePiece(dispatch),
+  };
+};
 
 class Tile extends Component {
 
   render() {
-    const { classes, direction, tile } = this.props;
+    const { classes, direction, tile, setActivePiece, activeId } = this.props;
 
     let tileClasses = (direction === "column") ? classes.tileVert : classes.tileHors;
-    let imgClasses = classes.img;
+    let imgClasses = classes.img + ((tile.id === activeId) ? " "+ classes.active : "");
 
     switch (direction) {
       case "column":
@@ -79,9 +97,13 @@ class Tile extends Component {
         break;
     }
 
+    // TODO: CHANGE Link to Button with OnClick > "push" location to router and set active piece
+
     return (
       <GridListTile title={tile.title} className={tileClasses} >
-        <Link to={"/piece/" + tile.id}>
+        {/*<a name={"p" + tile.id} />
+        <Link to={"/piece/" + tile.id + "#p" + tile.id} id={tile.id} onClick={() => (setActivePiece(tile.id))}>*/}
+        <Link to={"/piece/" + tile.id} id={tile.id} onClick={() => setActivePiece(tile.id)}>
           <img src={"/img/" + tile.img} alt={tile.title} className={imgClasses} />
 
           <GridListTileBar
@@ -89,13 +111,12 @@ class Tile extends Component {
             classes={{
               root: classes.titleBar,
               title: classes.title,
-            }}
+            }} 
           />
-
         </Link>
       </GridListTile>
     );
   }
 }
 
-export default withStyles(styles)(Tile);
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Tile));

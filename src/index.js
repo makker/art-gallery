@@ -9,7 +9,7 @@ import { ConnectedRouter } from 'react-router-redux'
 
 import store from './data/store';
 
-import './index.css';
+import './assets/css/index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
