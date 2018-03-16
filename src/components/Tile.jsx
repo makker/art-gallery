@@ -25,6 +25,7 @@ const styles = theme => ({
   tileGrid: {
     minHeight: '',
     minWidth: '25%',
+    margin: '4% 6%',
   },
   img: {
     minHeight: '50px',
@@ -41,6 +42,9 @@ const styles = theme => ({
     margin: '20px 0',
     width: '70%',
     height: 'auto',
+  },
+  imgGrid: {
+    margin: '30px',
   },
   active: {
     border: "2px solid white",
@@ -81,16 +85,23 @@ class Tile extends Component {
   render() {
     const { classes, direction, tile, setActivePiece, activeId } = this.props;
 
-    let tileClasses = (direction === "column") ? classes.tileVert : classes.tileHors;
+    let tileClasses = "";
     let imgClasses = classes.img + ((tile.id === activeId) ? " "+ classes.active : "");
 
     switch (direction) {
       case "column":
+        tileClasses = classes.tileVert;
         imgClasses += " " + classes.imgVert;
         break;
 
       case "row":
+        tileClasses = classes.tileHors;
         imgClasses += " " + classes.imgHors;
+        break;
+
+      case "both":
+        tileClasses = classes.tileGrid;
+        imgClasses += " " + classes.imgGrid;
         break;
 
       default:

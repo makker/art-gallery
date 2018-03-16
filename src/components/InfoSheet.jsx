@@ -1,26 +1,44 @@
 import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
+//import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
-// import Grid from 'material-ui/Grid';
 import IconButton from 'material-ui/IconButton';
 import InfoOutline from 'material-ui-icons/InfoOutline';
 import { withStyles } from 'material-ui/styles';
-// import Typography from 'material-ui/Typography';
+import Grid from 'material-ui/Grid';
 
-import { toggleInfoSheet, toggleInfoSheet2, INFOSHEET } from '../modules/appState';
+import InfoRow from './InfoRow';
+//import { toggleInfoSheet, toggleInfoSheet2 } from '../modules/appState';
+import { INFOSHEET } from '../modules/appState';
+import { setQueryStrings, removeQueryStrings } from '../modules/utils';
 
 const styles = {
-  infoButton: {
+  root: {
     top: 0,
     verticalAlign: 'top',
     marginRight: '-40px',
-  }
+  },
+  sheetOpen: {
+    marginRight: 0,
+    minWidth: "160px",
+  },
+  infoButton: {
+  },
+  sheet: {
+    color: 'white',
+    margin: '0 10px',
+  },
+  rows: {
+    width: 'auto',
+  },
 };
 
 const mapStateToProps = state => {
   return {
     open: state.app.infoSheetOpen,
+    path: state.router.pathname,
+    query: state.router.search,
   };
 }; 
 
@@ -32,6 +50,7 @@ const mapDispatchToProps = dispatch => {
   }
 };
 
+/*
 // Version 2, not used
 const mapDispatchToProps2 = dispatch => bindActionCreators({
   toggleInfoSheet: toggleInfoSheet2
@@ -43,19 +62,44 @@ const mapDispatchToProps3 = dispatch => {
   return {
     toggleInfoSheet: () => func(dispatch)
   };
-};
+}; */
 
 class InfoSheet extends Component {
 
   render() {
-    const { classes, data, open, toggleInfoSheet } = this.props;
-    console.log("data: ", data);
-    console.log("open: ", open);
+    const { classes, data, open, path, toggleInfoSheet } = this.props;
+
+    let rootClasses = classes.root;
+    let sheet = null;
+    
+    if (open) {
+      rootClasses += " " + classes.sheetOpen;
+      sheet = (
+        <Grid item className={classes.sheet}>
+          <Grid container spacing={0} cols="1" direction="column" className={classes.rows}>
+            {
+              Object.keys(data).map((key) => (
+                <InfoRow key={key} id={key} value={data[key]} />
+              ))
+            }
+          </Grid>
+          </Grid>);
+    }
+
+console.log("(!open): ", (!open));
+    const search = "?"+ ((!open) ? setQueryStrings({ info: 1 }, true) : removeQueryStrings(["info"], true));
     
     return (
-      <IconButton className={classes.infoButton} color="primary" aria-label="Menu" onClick={toggleInfoSheet}>
-        <InfoOutline />
-      </IconButton>
+      <Grid container spacing={0} className={rootClasses} direction="column" cols={1}>
+        <Grid item>
+          <Link to={{path, search}}>
+            <IconButton className={classes.infoButton} color="primary" aria-label="Menu" onClick={toggleInfoSheet}>
+            <InfoOutline />
+            </IconButton>
+          </Link>
+        </Grid>
+        {sheet}
+      </Grid>
     );
   }
 }

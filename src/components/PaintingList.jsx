@@ -22,7 +22,7 @@ const styles = theme => ({
     //flexWrap: 'wrap',
     justifyContent: 'space-around',
     overflow: 'hidden',
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: '#333333',
   },
   rootBottom: {
     width: '100%',
@@ -43,14 +43,14 @@ const styles = theme => ({
   },
   listRow: {
     flexWrap: 'nowrap',
-    height: '150px',
+    height: '120px',
     width: '100%',
     padding: '0 20px',
     [theme.breakpoints.up('sm')]: {
-      height: '180px',
+      height: '150px',
     },
     [theme.breakpoints.up('md')]: {
-      height: '230px',
+      height: '200px',
     },
   },
   listVert: {
@@ -67,6 +67,7 @@ const mapStateToProps = state => {
   return {
     activeId: state.app.activePiece,
     appW: state.app.viewportWidth,
+    typeFilter: state.app.typeFilter,
   };
 };
 
@@ -88,18 +89,16 @@ class PaintingList extends Component {
         case "column":
           const activeH = (activeNode) ? activeNode.clientHeight : 0;
           const thisH = ReactDOM.findDOMNode(this).clientHeight;
-          fromTop = activeNode.offsetTop - (thisH / 2) + (activeH / 2);
+          fromTop = (activeNode) ? (activeNode.offsetTop - (thisH / 2) + (activeH / 2)) : 0;
           break;
 
         case "row":
-          const activeW = activeNode.clientWidth;
+          const activeW = (activeNode) ? activeNode.clientWidth : 0;
           const appW = this.props.appW;
-          fromLeft = activeNode.offsetLeft - (appW / 2) + (activeW / 2);
-
+          fromLeft = (activeNode) ? ((activeNode.offsetLeft - (appW / 2) + (activeW / 2))) : 0;
           break;
 
         default:
-
           break;
       }
       
@@ -113,7 +112,6 @@ class PaintingList extends Component {
   }
 
   componentDidMount() {
-    console.log("MOUNT LIST");
     clearTimeout(this.timeout);
     this.timeout = setTimeout(this.scrollToActive.bind(this), 200);
   }
@@ -129,8 +127,7 @@ class PaintingList extends Component {
   }
 
   render() {
-    console.log("RENDER LIST");
-    const { classes, direction } = this.props,
+    const { classes, direction, typeFilter } = this.props,
       art = store.getState().art;
 
     let colCount = null;
@@ -157,11 +154,20 @@ class PaintingList extends Component {
         gridClasses += " " + classes.listGrid;
         break;
     }
+
+    const filteredList = art.artwork.filter(piece => {
+      console.log("("+ piece.type +"!=="+ typeFilter +"): ", (piece.type !== typeFilter));
+      if (typeFilter !== 0 && piece.type !== typeFilter) {
+        return false;
+      }
+      return piece;
+    });
+    console.log("filteredList: ", filteredList);
     
     return (
       <Grid item className={rootClasses} >
         <GridList className={gridClasses} spacing={0} cellHeight="auto" cols={colCount} id="list">
-          {art.artwork.map((tile, index) => (
+          {filteredList.map((tile, index) => (
             <Tile key={index} ref={"tile"+ tile.id} tile={tile} className={tileClasses} direction={direction} />
           ))}
         </GridList>

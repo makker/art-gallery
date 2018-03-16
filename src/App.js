@@ -34,22 +34,19 @@ const styles = theme => ({
     position: 'absolute',
     overflowY: 'hidden',
     justifyContent: 'space-between',
+    backgroundColor: '#424242',
   },
 });
 
 class App extends Component {
   componentWillMount() {
-    console.log("MOUNT APP");
     window.addEvent(window, "resize", () => {
       store.dispatch({ type: RATIO, ratio: ratio() });
       store.dispatch({ type: VIEWPORT_WIDTH, width: viewportWidth() });
     });
-    // store.dispatch({ type: 'ratio/CHANGE', ratio: ratio() });
   }
 
   render() {
-    console.log("RENDER APP");
-
     const { classes } = this.props;
     const state = store.getState();
     console.log("state: ", state);
@@ -60,9 +57,8 @@ class App extends Component {
         <Grid container direction="column" spacing={0} justify="space-between" className={classes.root} wrap="nowrap">
           <SimpleAppBar />
           <Route exact path="/" render={() => <PaintingList direction="both" />} />
-          <Route path="/piece" component={Middle} />
+          <Route exact path="/piece/:id" component={Middle} />
           <Bottom ratio={ratio} />
-          <Route exact path="/" render={() => <Bottom ratio={ratio} />} />
         </Grid>
       </MuiThemeProvider>
     );

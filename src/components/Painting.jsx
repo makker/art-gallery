@@ -22,11 +22,17 @@ const styles = {
     position: 'absolute',
   },
   imgContainer: {
-    flexShrink: 1,
+    flex: '0 1 auto',
   },
   img: {
     maxWidth: '100%',
     maxHeight: '100%',
+    WebkitBoxShadow: '4px 10px 38px 5px rgba(0,0,0,0.62)',
+    MozBoxShadow: '4px 10px 38px 5px rgba(0, 0, 0, 0.62)',
+    boxShadow: '4px 10px 38px 5px rgba(0, 0, 0, 0.62)',
+  },
+  sheetContainer: {
+    flex: '1 1', 
   },
 };
 
@@ -41,6 +47,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {};
 };
+
+// TODO: Transitio, https://reacttraining.com/react-router/web/example/animated-transitions
 
 class Painting extends Component {
 
@@ -58,10 +66,11 @@ class Painting extends Component {
         <Grid item className={classes.root}>
           <Grid container wrap="nowrap" direction="row" spacing={0} justify="center" alignContent="center" alignItems="center" className={classes.innerContainer}>
             <Grid item container spacing={0} direction="row" wrap="nowrap" justify="center">
+              <Grid item className={classes.sheetContainer} />
               <Grid item className={classes.imgContainer}>
                 <img src={"/img/" + tile.img} alt={tile.title} className={classes.img} style={imgStyle} />
               </Grid>
-              <Grid item>
+              <Grid item className={classes.sheetContainer}>
                 <InfoSheet data={tile} />
               </Grid>
             </Grid>

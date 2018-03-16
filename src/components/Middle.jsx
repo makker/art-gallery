@@ -38,23 +38,20 @@ const mapDispatchToProps = dispatch => {
 class Middle extends Component {
 
   componentDidMount() {
-    console.log("MOUNT MIDDLE");
   }
 
   componentDidUpdate() {
   }
   
   render() {
-    console.log("RENDER MIDDLE");
     const { classes, ratio } = this.props;
-    console.log("ratio: ", ratio);
     const direction = (ratio === "horizontal") ? "row" : "column";
 
     return (ratio === "horizontal") ? (
       <Grid item container spacing={0} direction={direction} className={classes.middleHors} wrap="nowrap">
         <PaintingList direction="column"></PaintingList>
         <Grid item className={classes.middleRight}>
-          <Grid container alignContent="center" spacing={0} alignContent="space-between" justify="center" className={classes.middleRightContainer} direction="column">
+          <Grid container spacing={0} alignContent="space-between" justify="center" className={classes.middleRightContainer} direction="column">
             <Route path="/piece/:id" component={Painting} />
             <Navi />
           </Grid>

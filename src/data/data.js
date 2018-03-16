@@ -10,7 +10,7 @@ const appData = {
   artworkType: {
     1: "Öljyväri",
     2: "Grafiikanlehti",
-    3: "piirros"
+    3: "Piirros"
   },
   topics: {
     1: "luonto",
@@ -20,6 +20,11 @@ const appData = {
     5: "lappi", 
     6: "meri"
   },
+  sellStatuses: {
+    1: "Ei myynnissä",
+    2: "Myynnissä",
+    3: "Myyty",
+  },
   artwork: [
     {
       id: 1,
@@ -28,13 +33,12 @@ const appData = {
       type: 1,
       hasFrames: true,
       topics: [],
-      width: 0,
-      height: 0,
+      width: 40,
+      height: 55,
       package: 'p2',
       img: 'p2_1.jpg',
-      forSale: true,
+      sellStatus: 2,
       price: 40,
-      sold: false,
       owner: [1, 2],
     },
     {
@@ -48,9 +52,8 @@ const appData = {
       height: 0,
       package: 'p2',
       img: 'p2_2.jpg',
-      forSale: true,
+      sellStatus: 2,
       price: 40,
-      sold: false,
       owner: [1, 2],
     },
     {
@@ -64,9 +67,8 @@ const appData = {
       height: 0,
       package: 'p2',
       img: 'p2_6.jpg',
-      forSale: true,
+      sellStatus: 2,
       price: 40,
-      sold: false,
       owner: [1, 2],
     },
     {
@@ -80,9 +82,8 @@ const appData = {
       height: 0,
       package: 'p3',
       img: 'p3_19.jpg',
-      forSale: true,
+      sellStatus: 2,
       price: 40,
-      sold: false,
       owner: [1, 2],
     },
     {
@@ -96,9 +97,8 @@ const appData = {
       height: 0,
       package: 'p6',
       img: 'p6_44.jpg',
-      forSale: true,
+      sellStatus: 2,
       price: 40,
-      sold: false,
       owner: [1, 2],
     },
     {
@@ -112,9 +112,8 @@ const appData = {
       height: 0,
       package: 'p6',
       img: 'p6_46.jpg',
-      forSale: true,
+      sellStatus: 2,
       price: 40,
-      sold: false,
       owner: [1, 2],
     },
     {
@@ -128,9 +127,8 @@ const appData = {
       height: 0,
       package: 'p6',
       img: 'p6_47.jpg',
-      forSale: true,
+      sellStatus: 2,
       price: 40,
-      sold: false,
       owner: [1, 2],
     },
     {
@@ -144,9 +142,8 @@ const appData = {
       height: 0,
       package: 'p6',
       img: 'p6_48.jpg',
-      forSale: true,
+      sellStatus: 2,
       price: 40,
-      sold: false,
       owner: [1, 2],
     },
     {
@@ -160,9 +157,8 @@ const appData = {
       height: 0,
       package: 'p8',
       img: 'p8_13.jpg',
-      forSale: true,
+      sellStatus: 2,
       price: 40,
-      sold: false,
       owner: [1, 2],
     },
     {
@@ -176,9 +172,8 @@ const appData = {
       height: 0,
       package: 'p8',
       img: 'p8_42.jpg',
-      forSale: true,
+      sellStatus: 2,
       price: 40,
-      sold: false,
       owner: [1, 2],
     },
     {
@@ -192,9 +187,8 @@ const appData = {
       height: 0,
       package: 'p9',
       img: 'p9_15.jpg',
-      forSale: true,
+      sellStatus: 2,
       price: 40,
-      sold: false,
       owner: [1, 2],
     },
     {
@@ -208,9 +202,8 @@ const appData = {
       height: 0,
       package: 'p9',
       img: 'p9_28.jpg',
-      forSale: true,
+      sellStatus: 2,
       price: 40,
-      sold: false,
       owner: [1, 2],
     },
     {
@@ -224,9 +217,8 @@ const appData = {
       height: 0,
       package: 'p9',
       img: 'p9_29.jpg',
-      forSale: true,
+      sellStatus: 2,
       price: 40,
-      sold: false,
       owner: [1, 2],
     },
     {
@@ -240,9 +232,8 @@ const appData = {
       height: 0,
       package: 'p9',
       img: 'p9_31.jpg',
-      forSale: true,
+      sellStatus: 2,
       price: 40,
-      sold: false,
       owner: [1, 2],
     },
   ]

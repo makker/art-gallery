@@ -13,7 +13,7 @@ import { BOTTOM_HEIGHT } from '../modules/appState';
 
 const styles = theme => ({
   bottomVert: {
-    flex: '1 0 auto',
+    flex: '0 0 auto',
     flexWrap: 'nowrap',
     // alignSelf: 'flex-end',
   }
@@ -23,6 +23,7 @@ const mapStateToProps = state => {
   // This is not really used
   return {
     ratio: state.app.ratio,
+    location: state.router.location,
   };
 };
 
@@ -58,8 +59,8 @@ class Bottom extends Component {
       </Grid>
     ) : (
         <Grid item container direction="column" spacing={0} className={classes.bottomVert} id="bottom">
-          <Navi />
-          <Route path="/piece" render={() => <PaintingList direction="row" />} />
+          <Route exact path="/piece/:id" component={Navi} />
+          <Route exact path="/piece/:id" render={() => <PaintingList direction="row" />} />
           <Footer></Footer>
         </Grid>
       )
