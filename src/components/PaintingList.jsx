@@ -156,13 +156,11 @@ class PaintingList extends Component {
     }
 
     const filteredList = art.artwork.filter(piece => {
-      console.log("("+ piece.type +"!=="+ typeFilter +"): ", (piece.type !== typeFilter));
       if (typeFilter !== 0 && piece.type !== typeFilter) {
         return false;
       }
       return piece;
     });
-    console.log("filteredList: ", filteredList);
     
     return (
       <Grid item className={rootClasses} >

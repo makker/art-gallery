@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 //import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { withRouter } from 'react-router';
 
 import IconButton from 'material-ui/IconButton';
 import InfoOutline from 'material-ui-icons/InfoOutline';
@@ -9,15 +9,16 @@ import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 
 import InfoRow from './InfoRow';
-//import { toggleInfoSheet, toggleInfoSheet2 } from '../modules/appState';
-import { INFOSHEET } from '../modules/appState';
-import { setQueryStrings, removeQueryStrings } from '../modules/utils';
+//import { INFOSHEET, toggleInfoSheet, toggleInfoSheet2 } from '../modules/appState';
+import { toggleInfoSheet } from '../modules/appState';
+import { removeQueryStrings, setQueryStrings } from '../modules/utils';
 
 const styles = {
   root: {
     top: 0,
     verticalAlign: 'top',
     marginRight: '-40px',
+    marginLeft: '6%',
   },
   sheetOpen: {
     marginRight: 0,
@@ -38,15 +39,16 @@ const mapStateToProps = state => {
   return {
     open: state.app.infoSheetOpen,
     path: state.router.pathname,
-    query: state.router.search,
   };
 }; 
 
 const mapDispatchToProps = dispatch => {
   return {
+    toggleInfoSheet: toggleInfoSheet(dispatch),
+    /*
     toggleInfoSheet: () => dispatch({
       type: INFOSHEET
-    })
+    }) */
   }
 };
 
@@ -67,10 +69,22 @@ const mapDispatchToProps3 = dispatch => {
 class InfoSheet extends Component {
 
   render() {
-    const { classes, data, open, path, toggleInfoSheet } = this.props;
+    const { classes, data, open, toggleInfoSheet, history } = this.props;
 
     let rootClasses = classes.root;
     let sheet = null;
+
+    function changeOpen(open) {
+      toggleInfoSheet(open);
+
+      const search = "?" + (
+        (open) ?
+          setQueryStrings({ info: 1 }, true) :
+          removeQueryStrings(["info"], true)
+      );
+
+      history.push({ search: search });
+    }
     
     if (open) {
       rootClasses += " " + classes.sheetOpen;
@@ -85,18 +99,13 @@ class InfoSheet extends Component {
           </Grid>
           </Grid>);
     }
-
-console.log("(!open): ", (!open));
-    const search = "?"+ ((!open) ? setQueryStrings({ info: 1 }, true) : removeQueryStrings(["info"], true));
     
     return (
       <Grid container spacing={0} className={rootClasses} direction="column" cols={1}>
         <Grid item>
-          <Link to={{path, search}}>
-            <IconButton className={classes.infoButton} color="primary" aria-label="Menu" onClick={toggleInfoSheet}>
-            <InfoOutline />
-            </IconButton>
-          </Link>
+          <IconButton className={classes.infoButton} color="primary" aria-label="Menu" onClick={() => changeOpen(!open)}>
+          <InfoOutline />
+          </IconButton>
         </Grid>
         {sheet}
       </Grid>
@@ -104,4 +113,4 @@ console.log("(!open): ", (!open));
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(InfoSheet));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(InfoSheet)));

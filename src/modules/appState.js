@@ -1,5 +1,7 @@
+import { push } from 'react-router-redux';
 import URLSearchParams from 'url-search-params';
 import ratio, { viewportWidth } from '../modules/ratio';
+import { setQueryStrings, removeQueryStrings } from './utils';
 
 export const RATIO = 'ratio/CHANGE';
 export const INFOSHEET = 'infoSheet/TOGGLE';
@@ -8,11 +10,14 @@ export const VIEWPORT_WIDTH = 'vpWidth/SET';
 export const BOTTOM_HEIGHT = 'bottomHeight/SET';
 export const NAVI_HEIGHT = 'naviHeight/SET';
 export const TYPE_FILTER = 'typeFilter/SET';
+export const VIRTUAL_FRAME = 'virtualFrame/SET';
 
 const path = window.location.pathname;
 const id = (path.indexOf("/piece/") === 0) ? parseInt(path.replace("/piece/", ""), 10) : null;
 const query = new URLSearchParams(window.location.search);
 const infoOpen = (query.get("info") === "1");
+const frameParam = query.get("frame");
+const virtualFrame = (frameParam !== null) ? parseInt(frameParam, 10) : 0;
 
 const initialState = { 
   infoSheetOpen: infoOpen,
@@ -22,6 +27,7 @@ const initialState = {
   bottomH: 0,
   naviH: 0,
   typeFilter: 0,
+  virtualFrame: virtualFrame,
 };
 
 export default (state = initialState, action) => {
@@ -55,7 +61,7 @@ export default (state = initialState, action) => {
     case INFOSHEET:
       return {
         ...state,
-        infoSheetOpen: !state.infoSheetOpen
+        infoSheetOpen: action.open,
       };
 
     case ACTIVE_PIECE:
@@ -68,6 +74,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         typeFilter: action.id,
+      };
+
+    case VIRTUAL_FRAME:
+      return {
+        ...state,
+        virtualFrame: action.id,
       };
 
     default:
@@ -84,10 +96,20 @@ export const toggleInfoSheet2 = () => {
   }
 };
 
-export const toggleInfoSheet = dispatch => {
-    dispatch({
-      type: INFOSHEET
-    });
+export const toggleInfoSheet = dispatch => open => {
+  dispatch({
+      type: INFOSHEET,
+      open: open,
+  });
+  const search = "?" + (
+    (open) ? 
+      setQueryStrings({ info: 1 }, true) : 
+      removeQueryStrings(["info"], true)
+  );
+
+  dispatch(push({
+    search
+  }));
 };
 
 export const setActivePiece = dispatch => id => {
@@ -98,9 +120,15 @@ export const setActivePiece = dispatch => id => {
 };
 
 export const setTypeFilter = dispatch => id => {
-  console.log("id: ", id);
   dispatch({
     type: TYPE_FILTER,
+    id: id,
+  });
+};
+
+export const setVirtualFrame = dispatch => id => {
+  dispatch({
+    type: VIRTUAL_FRAME,
     id: id,
   });
 };

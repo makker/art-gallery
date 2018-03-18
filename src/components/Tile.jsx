@@ -23,7 +23,6 @@ const styles = theme => ({
     textAlign: 'center',
   },
   tileGrid: {
-    minHeight: '',
     minWidth: '25%',
     margin: '4% 6%',
   },
@@ -59,6 +58,9 @@ const styles = theme => ({
       fontSize: '14px',
     },
   },
+  titleGrid: {
+    fontSize: '14px',
+  },
   titleBar: {
     background: 'transparent',
     height: '30px',
@@ -71,6 +73,7 @@ const mapStateToProps = state => {
   // This is not really used
   return {
     activeId: state.app.activePiece,
+    query: state.router.location.search,
   };
 }; 
 
@@ -83,10 +86,11 @@ const mapDispatchToProps = dispatch => {
 class Tile extends Component {
 
   render() {
-    const { classes, direction, tile, setActivePiece, activeId } = this.props;
+    const { classes, query, direction, tile, setActivePiece, activeId } = this.props;
 
     let tileClasses = "";
     let imgClasses = classes.img + ((tile.id === activeId) ? " "+ classes.active : "");
+    let titleClasses = classes.title;
 
     switch (direction) {
       case "column":
@@ -102,26 +106,23 @@ class Tile extends Component {
       case "both":
         tileClasses = classes.tileGrid;
         imgClasses += " " + classes.imgGrid;
+        titleClasses += " "+ classes.titleGrid;
         break;
 
       default:
         break;
     }
 
-    // TODO: CHANGE Link to Button with OnClick > "push" location to router and set active piece
-
     return (
       <GridListTile title={tile.title} className={tileClasses} >
-        {/*<a name={"p" + tile.id} />
-        <Link to={"/piece/" + tile.id + "#p" + tile.id} id={tile.id} onClick={() => (setActivePiece(tile.id))}>*/}
-        <Link to={"/piece/" + tile.id} id={tile.id} onClick={() => setActivePiece(tile.id)}>
+        <Link to={{ pathname: "/piece/" + tile.id, search: query }} id={tile.id} onClick={() => setActivePiece(tile.id)}>
           <img src={"/img/" + tile.img} alt={tile.title} className={imgClasses} />
 
           <GridListTileBar
             title={tile.title}
             classes={{
               root: classes.titleBar,
-              title: classes.title,
+              title: titleClasses,
             }} 
           />
         </Link>

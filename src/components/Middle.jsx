@@ -51,7 +51,7 @@ class Middle extends Component {
       <Grid item container spacing={0} direction={direction} className={classes.middleHors} wrap="nowrap">
         <PaintingList direction="column"></PaintingList>
         <Grid item className={classes.middleRight}>
-          <Grid container spacing={0} alignContent="space-between" justify="center" className={classes.middleRightContainer} direction="column">
+          <Grid container spacing={0} alignContent="space-between" justify="center" className={classes.middleRightContainer} direction="column" wrap="nowrap">
             <Route path="/piece/:id" component={Painting} />
             <Navi />
           </Grid>

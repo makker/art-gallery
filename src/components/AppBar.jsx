@@ -1,6 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import { withStyles } from 'material-ui/styles';
 import AppBar from 'material-ui/AppBar';
@@ -27,7 +27,7 @@ const styles = {
 };
 
 function SimpleAppBar(props) {
-  const { classes } = props;
+  const { classes, query } = props;
   return (
     <Grid item id="app-bar">
       <AppBar color="default" className={classes.appBar}>
@@ -35,7 +35,7 @@ function SimpleAppBar(props) {
           <Typography variant="title" color="inherit" className={classes.flex}>
             Title
           </Typography>
-          <Link to="/">
+          <Link to={{ pathname: "/", search: query }}>
             <IconButton className={classes.gridButton} color="primary" aria-label="Menu">
               <GridOn />
             </IconButton>
@@ -46,10 +46,14 @@ function SimpleAppBar(props) {
   );
 }
 
-
-
-SimpleAppBar.propTypes = {
-  classes: PropTypes.object.isRequired,
+const mapStateToProps = state => {
+  return {
+    query: state.router.location.search,
+  };
 };
 
-export default withStyles(styles)(SimpleAppBar);
+const mapDispatchToProps = dispatch => {
+  return {};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(SimpleAppBar));
