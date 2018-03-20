@@ -17,6 +17,7 @@ import './assets/css/App.css';
 import store from './data/store';
 import ratio, { viewportWidth, viewportHeight } from './modules/ratio'
 import { RATIO, VIEWPORT_WIDTH, VIEWPORT_HEIGHT } from './modules/appState';
+import ListManager from './components/ListManager';
 
 const theme = createMuiTheme({
   palette: {
@@ -39,12 +40,25 @@ const styles = theme => ({
 });
 
 class App extends Component {
+
   componentWillMount() {
     window.addEvent(window, "resize", () => {
+      // Don't call dispatchers like this. > Through dispatch to props please!
       store.dispatch({ type: RATIO, ratio: ratio() });
       store.dispatch({ type: VIEWPORT_WIDTH, width: viewportWidth() });
       store.dispatch({ type: VIEWPORT_HEIGHT, height: viewportHeight() });
     });
+    document.onkeydown = e => {
+      e = e || window.event;
+
+      const code = parseInt(e.keyCode, 10);
+
+      if (code === 37) {
+        
+      } else if (code === 39) {
+        console.log("Right: ");
+      }
+    };
   }
 
   render() {
@@ -53,6 +67,7 @@ class App extends Component {
     return (
       <MuiThemeProvider theme={theme}>
         <Reboot />
+        <ListManager />
         <Grid container direction="column" spacing={0} justify="space-between" className={classes.root} wrap="nowrap">
           <SimpleAppBar />
           <Route exact path="/" render={() => <PaintingList direction="both" />} />

@@ -7,7 +7,6 @@ import GridList from 'material-ui/GridList';
 import { withStyles } from 'material-ui/styles';
 
 import Tile from './Tile';
-import store from '../data/store';
 
 /*
 xs, extra - small: 0px or larger
@@ -72,18 +71,16 @@ const styles = theme => ({
 });
 
 const mapStateToProps = state => {
-  // This is not really used
   return {
+    filteredList: state.app.filteredList,
+    artwork: state.art.artwork,
     activeId: state.app.activePiece,
     appW: state.app.viewportWidth,
-    typeFilter: state.app.typeFilter,
-    sellFilter: state.app.sellFilter,
-    topicFilters: state.app.topicFilters,
   };
 };
 
 const mapDispatchToProps = dispatch => {
-  return {};
+  return { };
 };
 
 class PaintingList extends Component {
@@ -129,7 +126,7 @@ class PaintingList extends Component {
 
   componentWillUnmount() {
     clearTimeout(this.timeout);
-    delete this.timeout;
+    delete this.timeout;    
   }
 
   componentDidUpdate() {
@@ -138,8 +135,7 @@ class PaintingList extends Component {
   }
 
   render() {
-    const { classes, direction, typeFilter, sellFilter, topicFilters } = this.props,
-      art = store.getState().art;
+    const { classes, direction, filteredList } = this.props;
 
     let colCount = null;
     let rootClasses = classes.root;
@@ -165,19 +161,6 @@ class PaintingList extends Component {
         gridClasses += " " + classes.listGrid;
         break;
     }
-
-    const filteredList = art.artwork.filter(piece => {
-      if (typeFilter !== 0 && piece.type !== typeFilter) {
-        return false;
-      }
-      if (sellFilter !== 0 && piece.sellStatus !== sellFilter) {
-        return false;
-      }
-      if (!topicFilters.includes(0) && !topicFilters.every(t => piece.topics.includes(t))) {
-        return false;
-      }
-      return piece;
-    });
     
     return (
       <Grid item className={rootClasses} >

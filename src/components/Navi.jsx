@@ -11,6 +11,10 @@ import NavigateNext from 'material-ui-icons/NavigateNext';
 
 import { setActivePiece, NAVI_HEIGHT } from '../modules/appState';
 
+/**
+ * Filtered list management in PaintingList
+ */
+
 const styles = theme => ({
   navi: {
     textAlign: 'center',
@@ -22,6 +26,7 @@ const mapStateToProps = state => {
     activeId: state.app.activePiece,
     artwork: state.art.artwork,
     query: state.router.location.search,
+    filteredList: state.app.filteredList,
   };
 };
 
@@ -50,9 +55,9 @@ class Navi extends Component {
   }
 
   render() {
-    const { classes, artwork, query, activeId, setActivePiece } = this.props;
+    const { classes, artwork, query, activeId, setActivePiece, filteredList } = this.props;
     const currentId = parseInt(activeId, 10);
-    const currentIndex = artwork.findIndex((piece) => piece.id === activeId);
+    const currentIndex = filteredList.findIndex((piece) => piece.id === activeId);
 
     let prevButton = null;
     let nextButton = null;
@@ -60,17 +65,17 @@ class Navi extends Component {
       if (currentIndex === 0) {
         prevButton = (<IconButton disabled={true}><NavigateBefore /></IconButton>);
       } else if(currentIndex > 0) {
-        const prevId = artwork[currentIndex - 1].id;
+        const prevId = filteredList[currentIndex - 1].id;
         prevButton = (
           <Link to={{pathname: "/piece/" + prevId, search: query}} onClick={() => setActivePiece(prevId)}>
             <IconButton disabled={(currentIndex < 0)}><NavigateBefore /></IconButton>
           </Link>);
 
       }
-      if (currentIndex === (artwork.length - 1)) {
+      if (currentIndex === (filteredList.length - 1)) {
         nextButton = (<IconButton disabled={true}><NavigateNext /></IconButton>);
       } else if (currentIndex < (artwork.length - 1)) {
-        const nextId = artwork[currentIndex + 1].id;
+        const nextId = filteredList[currentIndex + 1].id;
         nextButton = (
           <Link to={{ pathname: "/piece/" + nextId, search: query }} onClick={() => setActivePiece(nextId)}>
             <IconButton disabled={(currentIndex < 0)}><NavigateNext /></IconButton>

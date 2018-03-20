@@ -5,6 +5,9 @@ import ratio, { viewportWidth, viewportHeight } from '../modules/ratio';
 export const RATIO = 'ratio/CHANGE';
 export const INFOSHEET = 'infoSheet/TOGGLE';
 export const ACTIVE_PIECE = 'activePiece/SET';
+export const FILTERD_LIST = 'filteredList/SET';
+export const PREV_ITEM = 'prevItem/SET';
+export const NEXT_ITEM = 'nextItem/SET';
 export const VIEWPORT_WIDTH = 'vpWidth/SET';
 export const VIEWPORT_HEIGHT = 'vpHeight/SET';
 export const BOTTOM_HEIGHT = 'bottomHeight/SET';
@@ -16,6 +19,9 @@ export const TOPICS = 'topics/SET';
 
 const path = window.location.pathname;
 const id = (path.indexOf("/piece/") === 0) ? parseInt(path.replace("/piece/", ""), 10) : null;
+const filteredList = [];
+const prevItem = {};
+const nextItem = {};
 const query = new URLSearchParams(window.location.search);
 const infoOpen = (query.get("info") === "1");
 const frameParam = query.get("frame");
@@ -36,6 +42,9 @@ const initialState = {
   virtualFrame,
   sellFilter,
   topicFilters,
+  filteredList,
+  prevItem,
+  nextItem,
 };
 
 export default (state = initialState, action) => {
@@ -82,6 +91,24 @@ export default (state = initialState, action) => {
       return {
         ...state,
         activePiece: action.id,
+      };
+
+    case FILTERD_LIST:
+      return {
+        ...state,
+        filteredList: action.payload,
+      };
+
+    case PREV_ITEM:
+      return {
+        ...state,
+        prevItem: action.payload,
+      };
+
+    case NEXT_ITEM:
+      return {
+        ...state,
+        nextItem: action.payload,
       };
 
     case TYPE_FILTER:
@@ -133,6 +160,12 @@ export const setActivePiece = dispatch => id => {
   dispatch({
     type: ACTIVE_PIECE,
     id: id,
+  });
+};
+export const setFilteredList = dispatch => list => {
+  dispatch({
+    type: FILTERD_LIST,
+    payload: list,
   });
 };
 

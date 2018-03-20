@@ -39,6 +39,8 @@ const styles = theme => Object.assign({
   },
   imgContainer: {
     flex: '0 1 auto',
+    color: 'white',
+    lineHeight: '2em',
   },
   mat: {
     height: '100%',
@@ -95,30 +97,42 @@ class Painting extends Component {
   render() {
     const { classes, ratio, vpH, vpW, bottomH, naviH, activeId, frameClass, matClass, imgClass, frameHeight } = this.props;
     
-    const tile = store.getState().art.artwork.find(art => art.id === activeId );
-    const appBar = document.getElementById('app-bar');
-    const appBarH = appBar && appBar.clientHeight;
+    let tile = store.getState().art.artwork.find(art => art.id === activeId );
     let painting = null;
-    
-    const canvasH = (ratio === "horizontal") ? (vpH - appBarH - bottomH - naviH) : (vpH - appBarH - bottomH)
-    const maxH = Math.round(canvasH - (Math.min(vpH, vpW) * 0.20)); 
 
-
-    if (tile.hasFrames || (frameClass === null && matClass === null && imgClass === null)) {
-      const imgStyle = { maxHeight: maxH + 'px' };
-
-      painting = <img src={"/img/" + tile.img} alt={tile.title} className={classes.img + " " + classes.shadow} style={imgStyle} />;
-
+    if (tile === undefined) {
+      tile = {
+        id: ":(",
+      }
+      painting = (
+        <div>
+          TAULUA EI LÖYDY!.<br />Muuta haun rajausta.
+        </div>
+      );
     } else {
-      const frameStyle = { maxHeight: maxH + 'px' };
-      const imgStyle = { maxHeight: 'calc(' + maxH + 'px - ' + frameHeight +')'};
+      const appBar = document.getElementById('app-bar');
+      const appBarH = appBar && appBar.clientHeight;
+      
+      const canvasH = (ratio === "horizontal") ? (vpH - appBarH - bottomH - naviH) : (vpH - appBarH - bottomH)
+      const maxH = Math.round(canvasH - (Math.min(vpH, vpW) * 0.20)); 
 
-      painting =
-        <Grid container spacing={0} direction="column" className={classes.frame + " " + classes.shadow + " " + classes[frameClass]} style={frameStyle}>
-          <Grid item className={classes.mat +" "+ classes[matClass]}>
-            <img src={"/img/" + tile.img} alt={tile.title} className={classes.img + " " + classes[imgClass]} style={imgStyle} />
+
+      if (tile.hasFrames || (frameClass === null && matClass === null && imgClass === null)) {
+        const imgStyle = { maxHeight: maxH + 'px' };
+
+        painting = <img src={"/img/" + tile.img} alt={tile.title} className={classes.img + " " + classes.shadow} style={imgStyle} />;
+
+      } else {
+        const frameStyle = { maxHeight: maxH + 'px' };
+        const imgStyle = { maxHeight: 'calc(' + maxH + 'px - ' + frameHeight +')'};
+
+        painting =
+          <Grid container spacing={0} direction="column" className={classes.frame + " " + classes.shadow + " " + classes[frameClass]} style={frameStyle}>
+            <Grid item className={classes.mat +" "+ classes[matClass]}>
+              <img src={"/img/" + tile.img} alt={tile.title} className={classes.img + " " + classes[imgClass]} style={imgStyle} />
+            </Grid>
           </Grid>
-        </Grid>
+      }
     }
     
     return (
