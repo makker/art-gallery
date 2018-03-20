@@ -24,21 +24,35 @@ const styles = theme => ({
   },
   tileGrid: {
     minWidth: '25%',
-    margin: '4% 6%',
+    margin: '4% 3%',
+    [theme.breakpoints.up('md')]: {
+      minWidth: '20%',
+      margin: '3% 2%',
+    },
+    [theme.breakpoints.up('lg')]: {
+      minWidth: '15%',
+      margin: '2% 1%',
+    },
   },
   img: {
     minHeight: '50px',
     minWidth: '50px',
-    maxHeight: '300px',
-    maxWidth: '300px',
+    maxHeight: '25vmin',
     height: 'calc(100% - 40px)',
     width: 'auto',
+    [theme.breakpoints.up('md')]: {
+      maxHeight: '22vmin',
+    },
+    [theme.breakpoints.up('xl')]: {
+      maxHeight: '20vmin',
+    },
   },
   imgHors: {
-    margin: '15px 0 10px',
+    margin: '18px 0 10px',
+    height: 'calc(100% - 40px)',
   },
   imgVert: {
-    margin: '20px 0',
+    margin: '25px 0',
     width: '70%',
     height: 'auto',
   },
@@ -46,7 +60,7 @@ const styles = theme => ({
     margin: '30px',
   },
   active: {
-    border: "2px solid white",
+    border: "3px solid orange",
   },
   title: {
     // color: theme.palette.primary.light,
@@ -63,7 +77,7 @@ const styles = theme => ({
   },
   titleBar: {
     background: 'transparent',
-    height: '30px',
+    height: '22px',
     // background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
 
   },
@@ -119,7 +133,7 @@ class Tile extends Component {
           <img src={"/img/" + tile.img} alt={tile.title} className={imgClasses} />
 
           <GridListTileBar
-            title={tile.title}
+            title={tile.id +". "+ tile.title}
             classes={{
               root: classes.titleBar,
               title: titleClasses,

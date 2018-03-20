@@ -28,9 +28,18 @@ const styles = theme => ({
     width: '100%',
   },
   rootSide: {
-    width: '20%',
+    width: '18%',
     minWidth: '100px',
-
+    overflow: 'auto',
+    [theme.breakpoints.up('md')]: {
+      width: '16%',
+    },
+    [theme.breakpoints.up('lg')]: {
+      width: '15%',
+    },
+    [theme.breakpoints.up('xl')]: {
+      width: '14%',
+    },
   },
   rootGrid: {
     width: '100%',
@@ -54,7 +63,7 @@ const styles = theme => ({
     },
   },
   listVert: {
-    height: '100%',
+    flex: '1 1 auto',
     padding: '15px 0',
   },
   listGrid: {
@@ -68,6 +77,8 @@ const mapStateToProps = state => {
     activeId: state.app.activePiece,
     appW: state.app.viewportWidth,
     typeFilter: state.app.typeFilter,
+    sellFilter: state.app.sellFilter,
+    topicFilters: state.app.topicFilters,
   };
 };
 
@@ -127,12 +138,12 @@ class PaintingList extends Component {
   }
 
   render() {
-    const { classes, direction, typeFilter } = this.props,
+    const { classes, direction, typeFilter, sellFilter, topicFilters } = this.props,
       art = store.getState().art;
 
     let colCount = null;
     let rootClasses = classes.root;
-    let gridClasses = classes.gridList;
+    let gridClasses = classes.list;
     let tileClasses = (direction === "column") ? classes.tileVert : classes.tileHors;
 
     switch(direction) {
@@ -157,6 +168,12 @@ class PaintingList extends Component {
 
     const filteredList = art.artwork.filter(piece => {
       if (typeFilter !== 0 && piece.type !== typeFilter) {
+        return false;
+      }
+      if (sellFilter !== 0 && piece.sellStatus !== sellFilter) {
+        return false;
+      }
+      if (!topicFilters.includes(0) && !topicFilters.every(t => piece.topics.includes(t))) {
         return false;
       }
       return piece;

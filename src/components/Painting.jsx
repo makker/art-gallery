@@ -8,19 +8,34 @@ import { withStyles } from 'material-ui/styles';
 import store from '../data/store';
 import InfoSheet from './InfoSheet';
 import frames, { frameJSS } from '../data/frames';
+import Avatar from 'material-ui/Avatar';
 
-const styles = {
+const styles = theme => Object.assign({
   root: {
     flex: '100 100',
     maxWidth: '100%',
     maxHeight: '100%',
-    padding: '10%',
+  },
+  wrapper: {
+    height: '100%',
+    padding: '10vmin',
   },
   innerContainer: {
     height: '100%',
   },
   close: {
     position: 'absolute',
+  },
+  number: {
+    backgroundColor: theme.palette.primary[500],
+    position: 'relative',
+    top: '3vmin',
+    left: '3vmin',
+    marginBottom: '-5vmin',
+    height: '5vmin',
+    width: '5vmin',
+    fontSize: '3vmin',
+    marginRight: '30px',
   },
   imgContainer: {
     flex: '0 1 auto',
@@ -46,11 +61,7 @@ const styles = {
   sheetContainer: {
     flex: '1 1', 
   },
-};
-
-Object.assign(styles, frameJSS);
-
-console.log("styles: ", styles);
+}, frameJSS);
 
 const mapStateToProps = state => {
   const frame = frames.find(frame => (frame.id === state.app.virtualFrame));
@@ -60,6 +71,9 @@ const mapStateToProps = state => {
   const frameHeight = (frame) ? frame.height || 0 : 0; 
   
   return {
+    vpH: state.app.viewportHeight,
+    vpW: state.app.viewportWidth,
+    ratio: state.app.ratio,
     bottomH: state.app.bottomH,
     naviH: state.app.naviH,
     activeId: state.app.activePiece,
@@ -79,51 +93,51 @@ const mapDispatchToProps = dispatch => {
 class Painting extends Component {
 
   render() {
-    const { classes, bottomH, naviH, activeId, frameClass, matClass, imgClass, frameHeight } = this.props;
+    const { classes, ratio, vpH, vpW, bottomH, naviH, activeId, frameClass, matClass, imgClass, frameHeight } = this.props;
     
     const tile = store.getState().art.artwork.find(art => art.id === activeId );
     const appBar = document.getElementById('app-bar');
-    const frameEl = document.getElementById('img-frame');
     const appBarH = appBar && appBar.clientHeight;
     let painting = null;
     
-    const vpH = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-    const maxH = Math.round((vpH - appBarH - bottomH - naviH) * 0.7); 
+    const canvasH = (ratio === "horizontal") ? (vpH - appBarH - bottomH - naviH) : (vpH - appBarH - bottomH)
+    const maxH = Math.round(canvasH - (Math.min(vpH, vpW) * 0.20)); 
 
-    if (tile.hasFrames) {
+
+    if (tile.hasFrames || (frameClass === null && matClass === null && imgClass === null)) {
       const imgStyle = { maxHeight: maxH + 'px' };
 
       painting = <img src={"/img/" + tile.img} alt={tile.title} className={classes.img + " " + classes.shadow} style={imgStyle} />;
 
     } else {
       const frameStyle = { maxHeight: maxH + 'px' };
-
-      console.log("frameHeight: ", frameHeight);
-
       const imgStyle = { maxHeight: 'calc(' + maxH + 'px - ' + frameHeight +')'};
-      console.log("imgStyle: ", imgStyle);
 
       painting =
-                <Grid container spacing={0} direction="column" className={classes.frame + " " + classes.shadow + " " + classes[frameClass]} style={frameStyle}>
-                  <Grid item className={classes.mat +" "+ classes[matClass]}>
-                    <img src={"/img/" + tile.img} alt={tile.title} className={classes.img + " " + classes[imgClass]} style={imgStyle} />
-                  </Grid>
-                </Grid>
+        <Grid container spacing={0} direction="column" className={classes.frame + " " + classes.shadow + " " + classes[frameClass]} style={frameStyle}>
+          <Grid item className={classes.mat +" "+ classes[matClass]}>
+            <img src={"/img/" + tile.img} alt={tile.title} className={classes.img + " " + classes[imgClass]} style={imgStyle} />
+          </Grid>
+        </Grid>
     }
     
     return (
         <Grid item className={classes.root}>
-          <Grid container wrap="nowrap" direction="row" spacing={0} justify="center" alignContent="center" alignItems="center" className={classes.innerContainer}>
-            <Grid item container spacing={0} direction="row" wrap="nowrap" justify="center">
-              <Grid item className={classes.sheetContainer} />
-              <Grid item className={classes.imgContainer}>
-               { painting }
-              </Grid>
-              <Grid item className={classes.sheetContainer}>
-                <InfoSheet data={tile} />
+          <Avatar className={classes.number}>{tile.id}</Avatar>
+          <div className={classes.wrapper}>
+            <Grid container wrap="nowrap" direction="row" spacing={0} justify="center" alignContent="center" alignItems="center" className={classes.innerContainer}>
+              <Grid item container spacing={0} direction="row" wrap="nowrap" justify="center">
+                <Grid item className={classes.sheetContainer}>
+                </Grid>
+                <Grid item className={classes.imgContainer}>
+                { painting }
+                </Grid>
+                <Grid item className={classes.sheetContainer}>
+                  <InfoSheet data={tile} />
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
+          </div>
         </Grid>
     );
   }

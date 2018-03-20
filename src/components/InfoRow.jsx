@@ -8,19 +8,51 @@ import Grid from 'material-ui/Grid';
 const styles = theme => ({
   row: {
     flex: '0 1',
-    width: 'auto',
+    width: '160px',
+    [theme.breakpoints.up('md')]: {
+      width: '13vw',
+    },
+  },
+  rowVert: {
+    width: '150px',
+    [theme.breakpoints.up('md')]: {
+      width: '15vw',
+    },
   },
   infoItem: {
     flex: '1 1',
     fontSize: '0.8em',
-    padding: '2px 5px',
-  }
+    padding: '.5vh .5vw',
+    [theme.breakpoints.up('md')]: {
+      fontSize: '1.1vw',  
+    },
+  },
+  infoItemVert: {
+    fontSize: '0.7em',
+    [theme.breakpoints.up('md')]: {
+      fontSize: '1.2vw',
+    },
+  },
+  notSelling: {
+    color: "#999",
+  },
+  selling: {
+    color: "#2eb92e",
+  },
+  sold: {
+    color: "#da6565",
+  },
+  sellingMaybe: {
+    color: "#ffc05e",
+  },
 });
 
 const mapStateToProps = state => {
   // This is not really used
   return {
+    ratio: state.app.ratio,
     artists: state.art.artists,
+    owners: state.art.owners,
     types: state.art.artworkType,
     topics: state.art.topics,
     statuses: state.art.sellStatuses,
@@ -34,83 +66,99 @@ const mapDispatchToProps = dispatch => {
 class InfoRow extends Component {
 
   render() {
-    const { classes, id, value, artists, types, statuses } = this.props;
+    const { classes, ratio, id, value, artists, owners, types, statuses } = this.props;
+
+    const labels = {
+      id: "Numero",
+      title: "Nimi",
+      artist: "Taiteilija",
+      type: "Tyyppi",
+      year: "Vuosi",
+      archiveId: "Artisto nro",
+      hasFrames: "Kehystetty",
+      width: "Leveys",
+      height: "Korkaus",
+      sellStatus: "Status",
+      price: "Hinta",
+    };
     let visible = false,
-        label = "",
-        info = value.toString();
+        label = labels[id] || "",
+        info = value.toString(),
+        rowClasses = [classes.row],
+        itemClasses = [classes.infoItem],
+        item2Classes = [];
 
     switch(id) {
-      case "id":
-        visible = true;
-        label = "Numero";
-        break;
 
       case "title":
+      case "year":
+      case "archiveId":
+      case "price":
         visible = true;
-        label = "Nimi"
         break;
 
       case "artist":
         visible = true;
-        label = "Taiteilija";
         info = artists.find(obj => obj.id === value).name;
         break;
 
       case "type":
         visible = true;
-        label = "Tyyppi";
         info = types[value];
         break;
 
       case "hasFrames":
         visible = true;
-        label = "Kehystetty";
         info = (value) ? "Kyllä" : "Ei";
         break;
 
       case "width":
-        if (value) {
-          visible = true;
-          label = "Leveys";
-        }
-        break;
-
       case "height":
         if (value) {
           visible = true;
-          label = "Korkeus";
         }
         break;
 
       case "sellStatus":
         visible = true;
-        label = "Status"
         info = statuses[value];
-        break;
+        switch(value) {
+          case 1:
+            item2Classes.push(classes.notSelling);
+            break;
+          case 2:
+            item2Classes.push(classes.selling);
+            break;
+          case 3:
+            item2Classes.push(classes.sold);
+            break;
+          case 4:
+            item2Classes.push(classes.sellingMaybe);
+            break;
 
-      case "price":
-        if (value) {
-          visible = true;
-          label = "Hinta";
+          default:
         }
         break;
 
-      case "topics":
-      case "package":
-      case "img":
       case "owner":
+        visible = true;
+        label = (value.length > 1) ? "Omistajat" : "Omistaja";
+
+        info = value.map((id, index) => owners.find(obj => obj.id === id).name + (((index + 1) < value.length) ? ", " : ""));
         break;
-
       default:
-        visible = true; // change
-        label = id;
-
     }
 
+    if (ratio === "vertical") {
+      rowClasses.push(classes.rowVert);
+      itemClasses.push(classes.infoItemVert);
+    }
+    item2Classes.push(...itemClasses);
+
     return (visible) ? (
-      <Grid item container spacing={0} className={classes.row} cols={2} direction="row" wrap="nowrap">
-        <Grid item className={classes.infoItem}>{label +":"}</Grid>
-        <Grid item className={classes.infoItem}>{info}</Grid>
+      <Grid item container spacing={0} className={rowClasses.join(" ")} cols={2} direction="row" wrap="nowrap">
+        <Grid item className={itemClasses.join(" ")}>{label +":"}</Grid>
+        <Grid item className={item2Classes.join(" ")}>{info}</Grid>
       </Grid>
     ) : null;
   }

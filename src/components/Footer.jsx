@@ -1,121 +1,203 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
+import { Route, withRouter } from 'react-router';
 
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 import Switch from 'material-ui/Switch';
 import { FormControl } from 'material-ui/Form';
 import { InputLabel } from 'material-ui/Input';
-import Select from 'material-ui/Select';
-import { MenuItem } from 'material-ui/Menu';
 
-import { setTypeFilter, setVirtualFrame } from '../modules/appState';
+//import { INFOSHEET, toggleInfoSheet, toggleInfoSheet2 } from '../modules/appState';
+import { setTypeFilter, setVirtualFrame, setSellStatus, toggleInfoSheet, setTopics } from '../modules/appState';
 import frames from '../data/frames';
 import { setQueryStrings, removeQueryStrings } from '../modules/utils';
+import SelectFilter from './SelectFilter';
 
 const styles = theme => ({
   root: {
     // position: 'absolute',
     // bottom: 0,
+    minHeight: '68px',
+    height: '8vh',
     width: '100%',
-    backgroundColor: '#333333',
+    backgroundColor: '#282828',
     color: 'white',
-    padding: '10px 20px 0',
+    padding: '1vh 4vw',
   },
-  bottom: {},
-  formControl: {
-    margin: '0 10px',
+  container: {
+    minHeight: '48px',
+    height: '6vh',
+    justifyContent: 'center',
+  },
+  formItem: {
+    alignItems: 'center',
+    display: 'flex',
+  },
+  switch: {
+    marginTop: '10px',
+    marginBottom: '-8px',
+  },
+  groupLabel: {
+    display: 'none',
+    [theme.breakpoints.up('md')]: {
+      display: 'block',
+    },
+  },
+  groupDivider: {
+    padding: '1vh 0 0 1.5vw',
+    margin: '0 1vw 0 1.5vw',
+    borderLeft: 'solid 1px white',
   },
 });
+
+/*
+// Version 2, not used
+const mapDispatchToProps2 = dispatch => bindActionCreators({
+  toggleInfoSheet: toggleInfoSheet2
+}, dispatch);
+
+// Version 3, not used
+const mapDispatchToProps3 = dispatch => {
+  const func = toggleInfoSheet;
+  return {
+    toggleInfoSheet: () => func(dispatch)
+  };
+}; */
 
 class Footer extends Component {
 
   render() {
-    const { classes, typeFilter, types, setType, virtualFrame, setFrame, history } = this.props;
+    const { 
+      classes, 
+      infoOpen, toggleInfoSheet,
+      typeFilter, types, setType, 
+      virtualFrame, setFrame, 
+      sellStatuses, sellFilter, setSell, 
+      topics, topicFilters, setTopics,
+      history } = this.props;
 
-    function changeType(id) {
-      setType(id);
+    function objectToArray(obj) {
+      return Object.keys(obj).map(key => ({ id: parseInt(key, 10), value: obj[key] }))
+    }
+
+    function changeOpen(open) {
+      toggleInfoSheet(open);
 
       const search = "?" + (
-        (id !== 0) ?
-          setQueryStrings({ type: id }, true) :
-          removeQueryStrings(["type"], true)
+        (open) ?
+          setQueryStrings({ info: 1 }, true) :
+          removeQueryStrings(["info"], true)
       );
+
       history.push({ search: search });
     }
 
-    function changeFrame(id) {
-      setFrame(id);
+    function changeValue(type, value) {
+      
+      switch(type) {
+        case "type":
+          setType(value);
+          break;
+
+        case "frame":
+          setFrame(value);
+          break;
+
+        case "topics":
+          const value0Index = value.indexOf(0);
+          if (value.length === 0 || (topicFilters.indexOf(0) === -1 && value0Index > -1)) {
+            value = [0];
+          } else if (value0Index > -1) {
+            value.splice(value0Index, 1);
+          }
+          setTopics(value);
+          break;
+
+        case "sell":
+          setSell(value);
+          break;
+
+        default:
+      }
 
       const search = "?" + (
-        (id !== 0) ?
-          setQueryStrings({ frame: id }, true) :
-          removeQueryStrings(["frame"], true)
+        (value !== 0) ?
+          setQueryStrings(
+            (() => { let o = {}; o[type] = value; return o; })(), 
+            true) :
+          removeQueryStrings([type], true)
       );
       history.push({ search: search });
     }
 
     return (
-      <Grid item className={ classes.root }>
-        Filters
+      <Grid item className={classes.root}>
+        <Grid container className={classes.container} spacing={0}>
 
-        <Switch
-            checked={false}
-            onChange={(e) => {/*call reducer*/}}
-            value="checkedA"
-          />
+          <Grid item className={classes.groupDivider} >
+            <div className={classes.groupLabel}>
+              Asetukset
+            </div>
+          </Grid>
+          <Grid item className={classes.formItem }>
+            <Route exact path="/piece/:id" render={() => 
+              <SelectFilter id="frame" label="Kehys" data={frames.map(item => ({ id: item.id, value: item.name }))} selectedValue={virtualFrame} defaultLabel="Ei kehystä" change={changeValue} />
+            } />
+            <FormControl className={classes.formControl}>
+              <InputLabel htmlFor="info-switch" shrink={true}>Info</InputLabel>
+              <Switch
+                checked={infoOpen}
+                onChange={(e) => changeOpen(e.target.checked)}
+                value="info"
+                color="primary"
+                className={classes.switch}
+                inputProps={{
+                  id: 'info-switch',
+                }}
+              />
+            </FormControl>
+          </Grid>
+          <Grid item className={classes.groupDivider} >
+            <div className={classes.groupLabel}>
+              Rajaa
+            </div>
+          </Grid>
+          <Grid item className={classes.formItem}>
+            <SelectFilter id="type" label="Tyyppi" data={objectToArray(types)} selectedValue={typeFilter} defaultLabel="Kaikki" change={changeValue} />
 
-        <FormControl className={classes.formControl}>
-          <InputLabel htmlFor="type-select">Tyyppi</InputLabel>
-          <Select 
-            value={typeFilter}
-            onChange={e => changeType(parseInt(e.target.value, 10))}
-            inputProps={{
-              id: 'type-select',
-            }}
-          >
-            <MenuItem key={0} value={0}>Kaikki</MenuItem>
-            {
-              Object.keys(types).map((type, index) => (
-                <MenuItem key={index} value={parseInt(type, 10)}>{types[type]}</MenuItem>
-              ))
-            }
-          </Select>
-        </FormControl>
+            <SelectFilter id="sell" label="Myynnissä" data={objectToArray(sellStatuses)} selectedValue={sellFilter} defaultLabel="Kaikki" change={changeValue} />
 
-        <FormControl className={classes.formControl}>
-          <InputLabel htmlFor="frame-select">Kehys</InputLabel>
-          <Select 
-            value={virtualFrame}
-            onChange={e => changeFrame(parseInt(e.target.value, 10))}
-            inputProps={{
-              id: 'frame-select',
-            }}>
-            <MenuItem key={0} value={0}>Ei kehystä</MenuItem>
-            { frames.map((frame, index) => (
-                <MenuItem key={frame.id} value={frame.id}>{frame.name}</MenuItem>
-              )) }
-          </Select>
-        </FormControl>
+            <SelectFilter id="topics" label="Aiheet" data={objectToArray(topics)} selectedValue={topicFilters} defaultLabel="Kaikki" multiple change={changeValue} />
+          </Grid>
+          <Grid item className={classes.groupDivider} ></Grid>
+        </Grid>
       </Grid>
     );
   }
 }
 
 const mapStateToProps = state => {
-  // This is not really used
   return {
+    path: state.router.location.pathname,
+    virtualFrame: state.app.virtualFrame,
+    infoOpen: state.app.infoSheetOpen,
     types: state.art.artworkType,
     typeFilter: state.app.typeFilter,
-    virtualFrame: state.app.virtualFrame,
+    sellStatuses: state.art.sellStatuses,
+    sellFilter: state.app.sellFilter,
+    topics: state.art.topics,
+    topicFilters: state.app.topicFilters,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    setType: setTypeFilter(dispatch),
     setFrame: setVirtualFrame(dispatch),
+    setType: setTypeFilter(dispatch),
+    setSell: setSellStatus(dispatch),
+    toggleInfoSheet: toggleInfoSheet(dispatch),
+    setTopics: setTopics(dispatch),
   };
 };
 

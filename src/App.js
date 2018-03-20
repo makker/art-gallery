@@ -15,8 +15,8 @@ import Middle from './components/Middle';
 
 import './assets/css/App.css';
 import store from './data/store';
-import ratio, { viewportWidth } from './modules/ratio'
-import { RATIO, VIEWPORT_WIDTH } from './modules/appState';
+import ratio, { viewportWidth, viewportHeight } from './modules/ratio'
+import { RATIO, VIEWPORT_WIDTH, VIEWPORT_HEIGHT } from './modules/appState';
 
 const theme = createMuiTheme({
   palette: {
@@ -43,13 +43,12 @@ class App extends Component {
     window.addEvent(window, "resize", () => {
       store.dispatch({ type: RATIO, ratio: ratio() });
       store.dispatch({ type: VIEWPORT_WIDTH, width: viewportWidth() });
+      store.dispatch({ type: VIEWPORT_HEIGHT, height: viewportHeight() });
     });
   }
 
   render() {
     const { classes } = this.props;
-    const state = store.getState();
-    console.log("state: ", state);
 
     return (
       <MuiThemeProvider theme={theme}>

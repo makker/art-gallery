@@ -1,16 +1,18 @@
-import { push } from 'react-router-redux';
+
 import URLSearchParams from 'url-search-params';
-import ratio, { viewportWidth } from '../modules/ratio';
-import { setQueryStrings, removeQueryStrings } from './utils';
+import ratio, { viewportWidth, viewportHeight } from '../modules/ratio';
 
 export const RATIO = 'ratio/CHANGE';
 export const INFOSHEET = 'infoSheet/TOGGLE';
 export const ACTIVE_PIECE = 'activePiece/SET';
 export const VIEWPORT_WIDTH = 'vpWidth/SET';
+export const VIEWPORT_HEIGHT = 'vpHeight/SET';
 export const BOTTOM_HEIGHT = 'bottomHeight/SET';
 export const NAVI_HEIGHT = 'naviHeight/SET';
 export const TYPE_FILTER = 'typeFilter/SET';
 export const VIRTUAL_FRAME = 'virtualFrame/SET';
+export const SELL_STATUS = 'sellStatus/SET';
+export const TOPICS = 'topics/SET';
 
 const path = window.location.pathname;
 const id = (path.indexOf("/piece/") === 0) ? parseInt(path.replace("/piece/", ""), 10) : null;
@@ -18,16 +20,22 @@ const query = new URLSearchParams(window.location.search);
 const infoOpen = (query.get("info") === "1");
 const frameParam = query.get("frame");
 const virtualFrame = (frameParam !== null) ? parseInt(frameParam, 10) : 0;
+const typeFilter = query.get("type") || 0;
+const sellFilter = query.get("sell") || 0;
+const topicFilters = (query.get("topics") && query.get("topics").split(".").map(f => parseInt(f, 10))) || [0];
 
 const initialState = { 
   infoSheetOpen: infoOpen,
   activePiece: id,
   ratio: ratio(),
   viewportWidth: viewportWidth(),
+  viewportHeight: viewportHeight(),
   bottomH: 0,
   naviH: 0,
-  typeFilter: 0,
-  virtualFrame: virtualFrame,
+  typeFilter,
+  virtualFrame,
+  sellFilter,
+  topicFilters,
 };
 
 export default (state = initialState, action) => {
@@ -44,6 +52,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         viewportWidth: action.width,
+      }
+
+    case VIEWPORT_HEIGHT:
+      return {
+        ...state,
+        viewportHeight: action.height,
       }
 
     case BOTTOM_HEIGHT:
@@ -82,6 +96,18 @@ export default (state = initialState, action) => {
         virtualFrame: action.id,
       };
 
+    case SELL_STATUS:
+      return {
+        ...state,
+        sellFilter: action.id,
+      };
+
+    case TOPICS:
+      return {
+        ...state,
+        topicFilters: action.filters,
+      };
+
     default:
       return state
   }
@@ -101,15 +127,6 @@ export const toggleInfoSheet = dispatch => open => {
       type: INFOSHEET,
       open: open,
   });
-  const search = "?" + (
-    (open) ? 
-      setQueryStrings({ info: 1 }, true) : 
-      removeQueryStrings(["info"], true)
-  );
-
-  dispatch(push({
-    search
-  }));
 };
 
 export const setActivePiece = dispatch => id => {
@@ -130,5 +147,19 @@ export const setVirtualFrame = dispatch => id => {
   dispatch({
     type: VIRTUAL_FRAME,
     id: id,
+  });
+};
+
+export const setSellStatus = dispatch => id => {
+  dispatch({
+    type: SELL_STATUS,
+    id: id,
+  });
+};
+
+export const setTopics = dispatch => filters => {
+  dispatch({
+    type: TOPICS,
+    filters,
   });
 };

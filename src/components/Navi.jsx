@@ -54,8 +54,6 @@ class Navi extends Component {
     const currentId = parseInt(activeId, 10);
     const currentIndex = artwork.findIndex((piece) => piece.id === activeId);
 
-    console.log("NAVI query: ", query);
-
     let prevButton = null;
     let nextButton = null;
     if (currentId !== undefined) {
