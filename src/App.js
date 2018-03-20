@@ -48,17 +48,6 @@ class App extends Component {
       store.dispatch({ type: VIEWPORT_WIDTH, width: viewportWidth() });
       store.dispatch({ type: VIEWPORT_HEIGHT, height: viewportHeight() });
     });
-    document.onkeydown = e => {
-      e = e || window.event;
-
-      const code = parseInt(e.keyCode, 10);
-
-      if (code === 37) {
-        
-      } else if (code === 39) {
-        console.log("Right: ");
-      }
-    };
   }
 
   render() {

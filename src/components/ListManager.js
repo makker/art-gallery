@@ -1,10 +1,12 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 
 import { setFilteredList, setActivePiece } from '../modules/appState';
 
 const mapStateToProps = state => {
   return {
+    search: state.router.location.search,
     artwork: state.art.artwork,
     activeId: state.app.activePiece,
     typeFilter: state.app.typeFilter,
@@ -22,7 +24,7 @@ const mapDispatchToProps = dispatch => {
 
 class ListManager extends Component {
 
-  updateList(artwork, activeId, setActivePiece, setFilteredList, typeFilter, sellFilter, topicFilters) {
+  updateList(search, history, artwork, activeId, setActivePiece, setFilteredList, typeFilter, sellFilter, topicFilters) {
 
     const filteredList = artwork.filter(piece => {      
       if (typeFilter !== 0 && piece.type !== typeFilter) {
@@ -41,21 +43,46 @@ class ListManager extends Component {
     setFilteredList(filteredList);
 
     if (!filteredList.some(p => p.id === activeId)) {
-      setActivePiece(filteredList[0] && filteredList[0].id);
+      activeId = filteredList[0] && filteredList[0].id;
+      setActivePiece(activeId);
     }
+    const activeIndex = filteredList.findIndex(p => p.id === activeId);
+    const prevIndex = activeIndex - 1;
+    const nextIndex = activeIndex + 1;
+    const query = search;
+    
+    document.onkeydown = e => {
+      e = e || window.event;
+
+      const code = parseInt(e.keyCode, 10);
+
+      if (code === 37) {
+        if (prevIndex >= 0) {
+          const prevId = filteredList[prevIndex].id;
+          history.push({ pathname: "/piece/" + prevId, search: query});
+          setActivePiece(prevId);
+        }
+      } else if (code === 39) {
+        if (nextIndex < filteredList.length) {
+          const nextId = filteredList[nextIndex].id;
+          history.push({ pathname: "/piece/" + nextId, search: query});
+          setActivePiece(nextId);
+        }
+      }
+    };
     
   }
 
   componentDidMount() {
-    const { artwork, activeId, setActivePiece, setFilteredList, typeFilter, sellFilter, topicFilters } = this.props;
+    const { search, history, artwork, activeId, setActivePiece, setFilteredList, typeFilter, sellFilter, topicFilters } = this.props;
 
-    this.updateList(artwork, activeId, setActivePiece, setFilteredList, typeFilter, sellFilter, topicFilters);
+    this.updateList(search, history, artwork, activeId, setActivePiece, setFilteredList, typeFilter, sellFilter, topicFilters);
   }
 
   componentDidUpdate() {
-    const { artwork, activeId, setActivePiece, setFilteredList, typeFilter, sellFilter, topicFilters } = this.props;
+    const { search, history, artwork, activeId, setActivePiece, setFilteredList, typeFilter, sellFilter, topicFilters } = this.props;
 
-    this.updateList(artwork, activeId, setActivePiece, setFilteredList, typeFilter, sellFilter, topicFilters);
+    this.updateList(search, history, artwork, activeId, setActivePiece, setFilteredList, typeFilter, sellFilter, topicFilters);
   }
 
   render() {
@@ -63,4 +90,4 @@ class ListManager extends Component {
   }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ListManager);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ListManager));

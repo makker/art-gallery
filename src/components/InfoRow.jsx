@@ -71,10 +71,11 @@ class InfoRow extends Component {
     const labels = {
       id: "Numero",
       title: "Nimi",
+      proof: "Vedos",
       artist: "Taiteilija",
       type: "Tyyppi",
       year: "Vuosi",
-      archiveId: "Artisto nro",
+      archiveId: "Arkisto nro",
       hasFrames: "Kehystetty",
       width: "Leveys",
       height: "Korkaus",
@@ -112,6 +113,7 @@ class InfoRow extends Component {
         info = (value) ? "Kyllä" : "Ei";
         break;
 
+      case "proof":
       case "width":
       case "height":
         if (value) {
