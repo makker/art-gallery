@@ -37,8 +37,8 @@ const styles = theme => ({
   img: {
     minHeight: '50px',
     minWidth: '50px',
-    maxHeight: '25vmin',
-    height: 'calc(100% - 40px)',
+    maxHeight: '30vmin',
+    height: 'calc(100% - 20px)',
     width: 'auto',
     [theme.breakpoints.up('md')]: {
       maxHeight: '22vmin',
@@ -57,7 +57,10 @@ const styles = theme => ({
     height: 'auto',
   },
   imgGrid: {
-    margin: '30px',
+    margin: '0 10px 20px',
+    [theme.breakpoints.up('md')]: {
+      margin: '30px',
+    },
   },
   active: {
     border: "3px solid orange",
@@ -86,6 +89,7 @@ const styles = theme => ({
 const mapStateToProps = state => {
   // This is not really used
   return {
+    root: state.app.root,
     activeId: state.app.activePiece,
     query: state.router.location.search,
   };
@@ -100,7 +104,7 @@ const mapDispatchToProps = dispatch => {
 class Tile extends Component {
 
   render() {
-    const { classes, query, direction, tile, setActivePiece, activeId } = this.props;
+    const { classes, root, query, direction, tile, setActivePiece, activeId } = this.props;
 
     let tileClasses = "";
     let imgClasses = classes.img + ((tile.id === activeId) ? " "+ classes.active : "");
@@ -129,8 +133,8 @@ class Tile extends Component {
 
     return (
       <GridListTile title={tile.title} className={tileClasses} >
-        <Link to={{ pathname: "/piece/" + tile.id, search: query }} id={tile.id} onClick={() => setActivePiece(tile.id)}>
-          <img src={"/img/" + tile.img} alt={tile.title} className={imgClasses} />
+        <Link to={{ pathname: root +"piece/" + tile.id, search: query }} id={tile.id} onClick={() => setActivePiece(tile.id)}>
+          <img src={root +"img/" + tile.img} alt={tile.title} className={imgClasses} />
 
           <GridListTileBar
             title={tile.id +". "+ tile.title}

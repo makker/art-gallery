@@ -22,6 +22,7 @@ const styles = theme => ({
 const mapStateToProps = state => {
   // This is not really used
   return {
+    root: state.app.root,
     ratio: state.app.ratio,
     location: state.router.location,
   };
@@ -51,7 +52,7 @@ class Bottom extends Component {
   }
   
   render() {
-    const { classes, ratio } = this.props;
+    const { root, classes, ratio } = this.props;
 
     return ((ratio === "horizontal") ? (
       <Grid item id="bottom">
@@ -59,8 +60,8 @@ class Bottom extends Component {
       </Grid>
     ) : (
         <Grid item container direction="column" spacing={0} className={classes.bottomVert} id="bottom">
-          <Route exact path="/piece/:id" component={Navi} />
-          <Route exact path="/piece/:id" render={() => <PaintingList direction="row" />} />
+          <Route exact path={root +"piece/:id"} component={Navi} />
+          <Route exact path={root +"piece/:id"} render={() => <PaintingList direction="row" />} />
           <Footer></Footer>
         </Grid>
       )

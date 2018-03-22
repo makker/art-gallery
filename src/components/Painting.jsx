@@ -73,6 +73,7 @@ const mapStateToProps = state => {
   const frameHeight = (frame) ? frame.height || 0 : 0; 
   
   return {
+    root: state.app.root,
     vpH: state.app.viewportHeight,
     vpW: state.app.viewportWidth,
     ratio: state.app.ratio,
@@ -95,7 +96,7 @@ const mapDispatchToProps = dispatch => {
 class Painting extends Component {
 
   render() {
-    const { classes, ratio, vpH, vpW, bottomH, naviH, activeId, frameClass, matClass, imgClass, frameHeight } = this.props;
+    const { root, classes, ratio, vpH, vpW, bottomH, naviH, activeId, frameClass, matClass, imgClass, frameHeight } = this.props;
     
     let tile = store.getState().art.artwork.find(art => art.id === activeId );
     let painting = null;
@@ -120,7 +121,7 @@ class Painting extends Component {
       if (tile.hasFrames || (frameClass === null && matClass === null && imgClass === null)) {
         const imgStyle = { maxHeight: maxH + 'px' };
 
-        painting = <img src={"/img/" + tile.img} alt={tile.title} className={classes.img + " " + classes.shadow} style={imgStyle} />;
+        painting = <img src={root +"img/" + tile.img} alt={tile.title} className={classes.img + " " + classes.shadow} style={imgStyle} />;
 
       } else {
         const frameStyle = { maxHeight: maxH + 'px' };
@@ -129,7 +130,7 @@ class Painting extends Component {
         painting =
           <Grid container spacing={0} direction="column" className={classes.frame + " " + classes.shadow + " " + classes[frameClass]} style={frameStyle}>
             <Grid item className={classes.mat +" "+ classes[matClass]}>
-              <img src={"/img/" + tile.img} alt={tile.title} className={classes.img + " " + classes[imgClass]} style={imgStyle} />
+              <img src={root +"img/" + tile.img} alt={tile.title} className={classes.img + " " + classes[imgClass]} style={imgStyle} />
             </Grid>
           </Grid>
       }

@@ -6,6 +6,8 @@ import { setFilteredList, setActivePiece } from '../modules/appState';
 
 const mapStateToProps = state => {
   return {
+    root: state.app.root,
+    path: state.router.location.pathname,
     search: state.router.location.search,
     artwork: state.art.artwork,
     activeId: state.app.activePiece,
@@ -24,8 +26,8 @@ const mapDispatchToProps = dispatch => {
 
 class ListManager extends Component {
 
-  updateList(search, history, artwork, activeId, setActivePiece, setFilteredList, typeFilter, sellFilter, topicFilters) {
-
+  updateList(history, root, path, search, artwork, activeId, setActivePiece, setFilteredList, typeFilter, sellFilter, topicFilters) {
+    const query = search;
     const filteredList = artwork.filter(piece => {      
       if (typeFilter !== 0 && piece.type !== typeFilter) {
         return false;
@@ -42,14 +44,15 @@ class ListManager extends Component {
 
     setFilteredList(filteredList);
 
-    if (!filteredList.some(p => p.id === activeId)) {
+    // If active id in filtered list, if not pick 1st from filtered
+    if (path !== "/" && !filteredList.some(p => p.id === activeId)) {
       activeId = filteredList[0] && filteredList[0].id;
+      history.push({ pathname: root + "piece/" + activeId, search });
       setActivePiece(activeId);
     }
     const activeIndex = filteredList.findIndex(p => p.id === activeId);
     const prevIndex = activeIndex - 1;
     const nextIndex = activeIndex + 1;
-    const query = search;
     
     document.onkeydown = e => {
       e = e || window.event;
@@ -59,13 +62,13 @@ class ListManager extends Component {
       if (code === 37) {
         if (prevIndex >= 0) {
           const prevId = filteredList[prevIndex].id;
-          history.push({ pathname: "/piece/" + prevId, search: query});
+          history.push({ pathname: root +"piece/" + prevId, search: query});
           setActivePiece(prevId);
         }
       } else if (code === 39) {
         if (nextIndex < filteredList.length) {
           const nextId = filteredList[nextIndex].id;
-          history.push({ pathname: "/piece/" + nextId, search: query});
+          history.push({ pathname: root +"piece/" + nextId, search: query});
           setActivePiece(nextId);
         }
       }
@@ -74,15 +77,15 @@ class ListManager extends Component {
   }
 
   componentDidMount() {
-    const { search, history, artwork, activeId, setActivePiece, setFilteredList, typeFilter, sellFilter, topicFilters } = this.props;
+    const { history, root, path, search, artwork, activeId, setActivePiece, setFilteredList, typeFilter, sellFilter, topicFilters } = this.props;
 
-    this.updateList(search, history, artwork, activeId, setActivePiece, setFilteredList, typeFilter, sellFilter, topicFilters);
+    this.updateList(history, root, path, search, artwork, activeId, setActivePiece, setFilteredList, typeFilter, sellFilter, topicFilters);
   }
 
   componentDidUpdate() {
-    const { search, history, artwork, activeId, setActivePiece, setFilteredList, typeFilter, sellFilter, topicFilters } = this.props;
+    const { history, root, path, search, artwork, activeId, setActivePiece, setFilteredList, typeFilter, sellFilter, topicFilters } = this.props;
 
-    this.updateList(search, history, artwork, activeId, setActivePiece, setFilteredList, typeFilter, sellFilter, topicFilters);
+    this.updateList(history, root, path, search, artwork, activeId, setActivePiece, setFilteredList, typeFilter, sellFilter, topicFilters);
   }
 
   render() {

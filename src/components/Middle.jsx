@@ -27,6 +27,7 @@ const styles = theme => ({
 const mapStateToProps = state => {
   // This is not really used
   return {
+    root: state.app.root,
     ratio: state.app.ratio,
   };
 };
@@ -44,7 +45,7 @@ class Middle extends Component {
   }
   
   render() {
-    const { classes, ratio } = this.props;
+    const { root, classes, ratio } = this.props;
     const direction = (ratio === "horizontal") ? "row" : "column";
 
     return (ratio === "horizontal") ? (
@@ -52,13 +53,13 @@ class Middle extends Component {
         <PaintingList direction="column"></PaintingList>
         <Grid item className={classes.middleRight}>
           <Grid container spacing={0} alignContent="space-between" justify="center" className={classes.middleRightContainer} direction="column" wrap="nowrap">
-            <Route path="/piece/:id" component={Painting} />
+            <Route path={root +"piece/:id"} component={Painting} />
             <Navi />
           </Grid>
         </Grid>
       </Grid>
     ) : (
-      <Route path="/piece/:id" component={Painting} />
+      <Route path={root +"piece/:id"} component={Painting} />
     );
   }
 }

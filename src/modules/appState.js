@@ -3,6 +3,7 @@ import URLSearchParams from 'url-search-params';
 import ratio, { viewportWidth, viewportHeight } from '../modules/ratio';
 
 export const RATIO = 'ratio/CHANGE';
+export const ROOT = 'root/SET';
 export const INFOSHEET = 'infoSheet/TOGGLE';
 export const ACTIVE_PIECE = 'activePiece/SET';
 export const FILTERD_LIST = 'filteredList/SET';
@@ -17,8 +18,25 @@ export const VIRTUAL_FRAME = 'virtualFrame/SET';
 export const SELL_STATUS = 'sellStatus/SET';
 export const TOPICS = 'topics/SET';
 
+const host = window.location.hostname;
+let root;
+switch(host) {
+  case "localhost":
+    root = "/";
+    break;
+
+  case "makker.github.io":
+    root = "/art-gallery/";
+    break;
+
+  default:
+  case "makker.net":
+    root = "/gallery/";
+    break;
+}
+
 const path = window.location.pathname;
-const id = (path.indexOf("/piece/") === 0) ? parseInt(path.replace("/piece/", ""), 10) : null;
+const id = (path.indexOf(root +"piece/") === 0) ? parseInt(path.replace(root +"piece/", ""), 10) : null;
 const filteredList = [];
 const prevItem = {};
 const nextItem = {};
@@ -26,11 +44,12 @@ const query = new URLSearchParams(window.location.search);
 const infoOpen = (query.get("info") === "1");
 const frameParam = query.get("frame");
 const virtualFrame = (frameParam !== null) ? parseInt(frameParam, 10) : 0;
-const typeFilter = query.get("type") || 0;
-const sellFilter = query.get("sell") || 0;
+const typeFilter = parseInt(query.get("type"), 10) || 0;
+const sellFilter = parseInt(query.get("sell"), 10) || 0;
 const topicFilters = (query.get("topics") && query.get("topics").split(".").map(f => parseInt(f, 10))) || [0];
 
 const initialState = { 
+  root,
   infoSheetOpen: infoOpen,
   activePiece: id,
   ratio: ratio(),
@@ -48,7 +67,6 @@ const initialState = {
 };
 
 export default (state = initialState, action) => {
-  console.log("action: ", action);
   switch (action.type) {
 
     case RATIO:

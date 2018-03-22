@@ -16,7 +16,7 @@ const styles = theme => ({
     },
   },
   select: {
-    fontSize: 'calc(9px + .8vw)',
+    fontSize: 'calc(9px + .8vmin)',
     [theme.breakpoints.up('md')]: {
       fontSize: 'initial',
     },
@@ -28,6 +28,7 @@ class SelectFilter extends Component {
   render() {
     const {
       classes,
+      className,
       id,
       label,
       data,
@@ -37,7 +38,7 @@ class SelectFilter extends Component {
       change } = this.props;
     
     return (
-      <FormControl className={classes.formControl}>
+      <FormControl className={classes.formControl + " " + className}>
         <InputLabel htmlFor={id +"-select"}>{label}</InputLabel>
         <Select
           value={selectedValue}

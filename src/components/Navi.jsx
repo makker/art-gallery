@@ -23,9 +23,10 @@ const styles = theme => ({
 
 const mapStateToProps = state => {
   return {
+    root: state.app.root,
+    query: state.router.location.search,
     activeId: state.app.activePiece,
     artwork: state.art.artwork,
-    query: state.router.location.search,
     filteredList: state.app.filteredList,
   };
 };
@@ -55,7 +56,7 @@ class Navi extends Component {
   }
 
   render() {
-    const { classes, artwork, query, activeId, setActivePiece, filteredList } = this.props;
+    const { root, classes, artwork, query, activeId, setActivePiece, filteredList } = this.props;
     const currentId = parseInt(activeId, 10);
     const currentIndex = filteredList.findIndex((piece) => piece.id === activeId);
 
@@ -67,7 +68,7 @@ class Navi extends Component {
       } else if(currentIndex > 0) {
         const prevId = filteredList[currentIndex - 1].id;
         prevButton = (
-          <Link to={{pathname: "/piece/" + prevId, search: query}} onClick={() => setActivePiece(prevId)}>
+          <Link to={{pathname: root +"piece/" + prevId, search: query}} onClick={() => setActivePiece(prevId)}>
             <IconButton disabled={(currentIndex < 0)}><NavigateBefore /></IconButton>
           </Link>);
 
@@ -77,7 +78,7 @@ class Navi extends Component {
       } else if (currentIndex < (artwork.length - 1)) {
         const nextId = filteredList[currentIndex + 1].id;
         nextButton = (
-          <Link to={{ pathname: "/piece/" + nextId, search: query }} onClick={() => setActivePiece(nextId)}>
+          <Link to={{ pathname: root +"piece/" + nextId, search: query }} onClick={() => setActivePiece(nextId)}>
             <IconButton disabled={(currentIndex < 0)}><NavigateNext /></IconButton>
           </Link>);
       }

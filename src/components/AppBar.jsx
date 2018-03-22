@@ -34,18 +34,18 @@ const styles = theme => ({
 });
 
 function SimpleAppBar(props) {
-  const { classes, query } = props;
+  const { classes, root, query } = props;
   return (
     <Grid item id="app-bar">
       <AppBar color="default" className={classes.appBar}>
         <Toolbar>
           <Typography variant="title" color="inherit" className={classes.flex}>
-            <Link to={{pathname: "/", search: query }} color="white" className={classes.link}>
+            <Link to={{pathname: root, search: query }} color="white" className={classes.link}>
                 Galleria Haili
             </Link>
           </Typography>
-          <Route exact path="/piece/:id" render={() => 
-            <Link to={{ pathname: "/", search: query }}>
+          <Route exact path={root +"piece/:id"} render={() => 
+            <Link to={{ pathname: root, search: query }}>
               <IconButton className={classes.gridButton} color="primary" aria-label="Menu">
                 <GridOn />
               </IconButton>
@@ -58,6 +58,7 @@ function SimpleAppBar(props) {
 
 const mapStateToProps = state => {
   return {
+    root: state.app.root,
     path: state.router.location.pathname,
     query: state.router.location.search,
   };

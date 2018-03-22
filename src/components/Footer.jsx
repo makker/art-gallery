@@ -18,36 +18,63 @@ const styles = theme => ({
   root: {
     // position: 'absolute',
     // bottom: 0,
-    minHeight: '68px',
-    height: '8vh',
+    display: 'flex',
+    justifyContent: 'center',
     width: '100%',
+    minHeight: '92px',
     backgroundColor: '#282828',
     color: 'white',
-    padding: '1vh 4vw',
+    padding: '1vh 2vw ',
+    overflowX: 'hidden',
+    [theme.breakpoints.up('sm')]: {
+      padding: '1vh calc(4vw - 30px)',
+      minHeight: '68px',
+      height: '8vh',
+    },
   },
   container: {
-    minHeight: '48px',
-    height: '6vh',
+    flex: '0 1 auto',
+    minHeight: '75px',
+    height: '8vh',
+    width: 'auto',
+    padding: '0 2vw',
     justifyContent: 'center',
+    '&:first-child': {
+      borderRight: 'solid 1px white',
+    },
+    [theme.breakpoints.up('sm')]: {
+      minHeight: '48px',
+      height: '6vh',
+      marginRight: '-1px',
+      borderLeft: 'solid 1px white',
+      borderRight: 'solid 1px white',
+    },
   },
   formItem: {
     alignItems: 'center',
     display: 'flex',
   },
+  marginFixer: {},
   switch: {
-    marginTop: '10px',
-    marginBottom: '-8px',
+    margin: '10px -10px -10px',
+    transform: 'scale(.8)',
+    height: '44px',
+    [theme.breakpoints.up('sm')]: {
+      transform: 'scale(1)',
+      margin: '10px 0 -10px',
+    }
   },
   groupLabel: {
-    display: 'none',
+    fontSize: 'calc(8px + 1vmin)',
     [theme.breakpoints.up('md')]: {
       display: 'block',
     },
   },
   groupDivider: {
-    padding: '1vh 0 0 1.5vw',
-    margin: '0 1vw 0 1.5vw',
-    borderLeft: 'solid 1px white',
+    margin: '0 .5vw 0 1vw',
+    [theme.breakpoints.up('sm')]: {
+      margin: '0 1vw 0 1.5vw',
+    },
   },
 });
 
@@ -69,6 +96,7 @@ class Footer extends Component {
 
   render() {
     const { 
+      root,
       classes, 
       infoOpen, toggleInfoSheet,
       typeFilter, types, setType, 
@@ -141,16 +169,17 @@ class Footer extends Component {
             </div>
           </Grid>
           <Grid item className={classes.formItem }>
-            <Route exact path="/piece/:id" render={() => 
-              <SelectFilter id="frame" label="Kehys" data={frames.map(item => ({ id: item.id, value: item.name }))} selectedValue={virtualFrame} defaultLabel="Ei kehystä" change={changeValue} />
+            <Route exact path={root +"piece/:id"} render={() => 
+              <SelectFilter id="frame" label="Kehys" data={frames.map(item => ({ id: item.id, value: item.name }))} selectedValue={virtualFrame} defaultLabel="Ei kehystä" change={changeValue} className={ classes.marginFixer } />
             } />
-            <FormControl className={classes.formControl}>
+            <FormControl className={classes.formControl + " " + classes.marginFixer}>
               <InputLabel htmlFor="info-switch" shrink={true}>Info</InputLabel>
               <Switch
                 checked={infoOpen}
                 onChange={(e) => changeOpen(e.target.checked)}
                 value="info"
                 color="primary"
+                classes={{ icon: classes.icon }}
                 className={classes.switch}
                 inputProps={{
                   id: 'info-switch',
@@ -158,6 +187,8 @@ class Footer extends Component {
               />
             </FormControl>
           </Grid>
+        </Grid>
+        <Grid container className={classes.container} spacing={0}>
           <Grid item className={classes.groupDivider} >
             <div className={classes.groupLabel}>
               Rajaa
@@ -170,7 +201,6 @@ class Footer extends Component {
 
             <SelectFilter id="topics" label="Aiheet" data={objectToArray(topics)} selectedValue={topicFilters} defaultLabel="Kaikki" multiple change={changeValue} />
           </Grid>
-          <Grid item className={classes.groupDivider} ></Grid>
         </Grid>
       </Grid>
     );
@@ -179,6 +209,7 @@ class Footer extends Component {
 
 const mapStateToProps = state => {
   return {
+    root: state.app.root,
     path: state.router.location.pathname,
     virtualFrame: state.app.virtualFrame,
     infoOpen: state.app.infoSheetOpen,

@@ -22,6 +22,7 @@ const styles = theme => ({
     justifyContent: 'space-around',
     overflow: 'hidden',
     backgroundColor: '#333333',
+    padding: '15px 0',
   },
   rootBottom: {
     width: '100%',

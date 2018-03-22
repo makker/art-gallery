@@ -25,7 +25,7 @@ const theme = createMuiTheme({
     type: 'dark',
     primary: primary,
     // secondary: 
-  }
+  },
 });
 
 const styles = theme => ({
@@ -51,7 +51,8 @@ class App extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, root } = this.props;
+    console.log("root: ", root);
 
     return (
       <MuiThemeProvider theme={theme}>
@@ -59,8 +60,8 @@ class App extends Component {
         <ListManager />
         <Grid container direction="column" spacing={0} justify="space-between" className={classes.root} wrap="nowrap">
           <SimpleAppBar />
-          <Route exact path="/" render={() => <PaintingList direction="both" />} />
-          <Route exact path="/piece/:id" component={Middle} />
+          <Route exact path={root} render={() => <PaintingList direction="both" />} />
+          <Route exact path={root +"piece/:id"} component={Middle} />
           <Bottom ratio={ratio} />
         </Grid>
       </MuiThemeProvider>
@@ -70,6 +71,7 @@ class App extends Component {
 
 const mapStateToProps = state => ({
   match: state.router.match,
+  root: state.app.root,
 });
 
 const mapDispatchToProps = dispatch => {
