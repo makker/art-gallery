@@ -5,8 +5,10 @@ import { connect } from 'react-redux';
 import Grid from 'material-ui/Grid';
 import GridList from 'material-ui/GridList';
 import { withStyles } from 'material-ui/styles';
+import { Scrollbars } from 'react-custom-scrollbars';
 
 import Tile from './Tile';
+import { LIST_HEIGHT } from '../modules/appState';
 
 /*
 xs, extra - small: 0px or larger
@@ -22,15 +24,20 @@ const styles = theme => ({
     justifyContent: 'space-around',
     overflow: 'hidden',
     backgroundColor: '#333333',
-    padding: '15px 0',
+    color: 'white',
   },
   rootBottom: {
+    display: 'flex',
     width: '100%',
+    padding: '0',
+    overflowX: 'auto',
+    flex: '0 1 auto', 
   },
   rootSide: {
     width: '18%',
     minWidth: '100px',
-    overflow: 'auto',
+    overflowY: 'auto',
+    overflowX: 'hidden',
     [theme.breakpoints.up('md')]: {
       width: '16%',
     },
@@ -42,29 +49,49 @@ const styles = theme => ({
     },
   },
   rootGrid: {
+    display: 'flex',
+    flex: '1 1 auto', 
     width: '100%',
-    flex: 1, 
+    height: '100%',
     overflowY: 'auto',
+  },
+  scrollGrid: {
+    display: 'flex',
+    flex: '1 0 auto',
+  },
+  scrollRow: {
+    display: 'flex',
+    flex: '1 0 auto',
+    width: 'auto',
+  },
+  scrollColumn: {
+    display: 'flex',
+    flex: '1 0 auto',
+  },
+  scrollInnerRow: {
+    display: 'flex',
+    overflowX: 'scroll',
+  },
+  scrollInnerColumn: {
+    overflowX: 'hidden',
   },
   list: {
     // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
     transform: 'translateZ(0)',
+    flex: '0 1 auto',
+    padding: '2vh 3vw',
   },
   listRow: {
     flexWrap: 'nowrap',
-    height: '120px',
-    width: '100%',
-    padding: '0 20px',
-    [theme.breakpoints.up('sm')]: {
-      height: '150px',
-    },
-    [theme.breakpoints.up('md')]: {
-      height: '200px',
-    },
+    height: 'calc(40px + 14vmin)',
+    width: 'auto',
+    padding: '0 20px 19px',
+    flex: '1 0 auto',
+
   },
   listVert: {
-    flex: '1 1 auto',
-    padding: '15px 0',
+    padding: 'calc(3vh - 20px) 0 25px',
+    flex: '1 0 auto',
   },
   listGrid: {
     justifyContent: "space-evenly",
@@ -81,7 +108,14 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => {
-  return { };
+  return {
+    setListHeight: (height) => {
+      dispatch({
+        type: LIST_HEIGHT,
+        height: height,
+      })
+    }
+  };
 };
 
 class PaintingList extends Component {
@@ -123,6 +157,9 @@ class PaintingList extends Component {
   componentDidMount() {
     clearTimeout(this.timeout);
     this.timeout = setTimeout(this.scrollToActive.bind(this), 200);
+
+    const { setListHeight } = this.props;
+    setListHeight(ReactDOM.findDOMNode(this).clientHeight);
   }
 
   componentWillUnmount() {
@@ -133,6 +170,9 @@ class PaintingList extends Component {
   componentDidUpdate() {
     clearTimeout(this.timeout);
     this.scrollToActive();
+
+    const { setListHeight } = this.props;
+    setListHeight(ReactDOM.findDOMNode(this).clientHeight);
   }
 
   render() {
@@ -142,34 +182,74 @@ class PaintingList extends Component {
     let rootClasses = classes.root;
     let gridClasses = classes.list;
     let tileClasses = (direction === "column") ? classes.tileVert : classes.tileHors;
+    let vertScrollTrack = ({ style, ...props }) =>
+          <div {...props} style={{
+            ...style, ...scrollRootStyles, bottom: '7px', top: '9px',
+          }} />;
+    const scrollClasses = [];
+    const scrollInnerClasses = [];
 
     switch(direction) {
       case "column":
         rootClasses += " " + classes.rootSide;
         colCount = 1;
         gridClasses += " " + classes.listVert;
+        scrollClasses.push(classes.scrollColumn);
+        scrollInnerClasses.push(classes.scrollInnerColumn);
         break;
 
       case "row": 
         rootClasses += " " + classes.rootBottom;
         colCount = null;
         gridClasses += " " + classes.listRow;
+        scrollClasses.push(classes.scrollRow);
+        scrollInnerClasses.push(classes.scrollInnerRow);
+        vertScrollTrack = (...props) => <div style={{ display: 'none', }} />;
         break;
 
       default:
         rootClasses += " " + classes.rootGrid;
         colCount = 3;
         gridClasses += " " + classes.listGrid;
+        scrollClasses.push(classes.scrollGrid)
         break;
     }
+
+    const scrollRootStyles = {
+      right: '7px',
+      borderRadius: '3px',
+    };
+    const scrollThumbStyles = { 
+      backgroundColor: 'rgba(200, 200, 200, .2)', 
+      borderRadius: 'inherit',
+    };
     
     return (
       <Grid item className={rootClasses} >
-        <GridList className={gridClasses} spacing={0} cellHeight="auto" cols={colCount} id="list">
-          {filteredList.map((tile, index) => (
-            <Tile key={index} ref={"tile"+ tile.id} tile={tile} className={tileClasses} direction={direction} />
-          ))}
-        </GridList>
+        <Scrollbars autoHeight hideTracksWhenNotNeeded autoHeightMax="100%" style={{ width: '100%', }} className={scrollClasses.join(" ")}
+          renderTrackHorizontal={({ style, ...props }) =>
+            <div {...props} style={{ ...style, ...scrollRootStyles, bottom: '10px', left: '9px', }} />
+          }
+          renderTrackVertical={ vertScrollTrack }
+          renderThumbHorizontal={({ style, ...props }) =>
+            <div {...props} style={{ ...style, ...scrollThumbStyles }} />
+          }
+          renderThumbVertical={({ style, ...props }) =>
+            <div {...props} style={{ ...style, ...scrollThumbStyles }} />
+          }
+          renderView={props => <div {...props} className={scrollInnerClasses.join(" ")} id="list" />}> 
+          <GridList className={gridClasses} spacing={0} cellHeight="auto" cols={colCount}>
+          { (filteredList.length > 0) ? (
+            filteredList.map((tile, index) => (
+              <Tile key={index} ref={"tile"+ tile.id} tile={tile} className={tileClasses} direction={direction} />
+            ))) : (
+              <div>
+                HAULLA EI LÖYDY TEOKSIA!<br />Muuta haun rajausta.
+              </div>
+            )
+          }
+          </GridList>
+        </Scrollbars>
       </Grid>
     );
   }

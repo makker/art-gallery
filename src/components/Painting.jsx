@@ -10,15 +10,34 @@ import InfoSheet from './InfoSheet';
 import frames, { frameJSS } from '../data/frames';
 import Avatar from 'material-ui/Avatar';
 
-const styles = theme => Object.assign({
+var isIE = !!navigator.userAgent.match(/Trident/g) || !!navigator.userAgent.match(/MSIE/g);
+if (isIE) {
+  // Remove properties name starting with &, causes errot in IE in withStyles
+  for (let style in frameJSS) {
+    Object.entries(frameJSS[style]).forEach(item => {
+      if (item[0].indexOf("&") === 0) {
+        delete frameJSS[style][item[0]];
+      }
+    })
+  } 
+}
+
+const mainMargin = '10vmin';
+
+const styles = theme => Object.assign(frameJSS, {
   root: {
     flex: '100 100',
     maxWidth: '100%',
     maxHeight: '100%',
+    display: 'flex',
   },
   wrapper: {
     height: '100%',
-    padding: '10vmin',
+    padding: 'calc(' + mainMargin +' - 10px) calc(' + mainMargin + ' - 10px) calc(' + mainMargin +' - 30px)',
+    margin: 'auto',
+  },
+  wrapperVert: {
+    //padding: 'calc(' + mainMargin + ' - 10px) calc(' + mainMargin + ' - 10px) calc(' + mainMargin +' - 30px)',
   },
   innerContainer: {
     height: '100%',
@@ -35,7 +54,7 @@ const styles = theme => Object.assign({
     height: '5vmin',
     width: '5vmin',
     fontSize: '3vmin',
-    marginRight: '30px',
+    marginRight: '-5vmin',
   },
   imgContainer: {
     flex: '0 1 auto',
@@ -47,7 +66,6 @@ const styles = theme => Object.assign({
   },
   frame: {
     flex: '1 1', 
-    //height: '100%',
   },
   shadow: {
     WebkitBoxShadow: '4px 10px 38px 5px rgba(0,0,0,0.62)',
@@ -63,7 +81,7 @@ const styles = theme => Object.assign({
   sheetContainer: {
     flex: '1 1', 
   },
-}, frameJSS);
+});
 
 const mapStateToProps = state => {
   const frame = frames.find(frame => (frame.id === state.app.virtualFrame));
@@ -75,9 +93,9 @@ const mapStateToProps = state => {
   return {
     root: state.app.root,
     vpH: state.app.viewportHeight,
-    vpW: state.app.viewportWidth,
     ratio: state.app.ratio,
-    bottomH: state.app.bottomH,
+    listH: state.app.listH,
+    filtersH: state.app.filtersH,
     naviH: state.app.naviH,
     activeId: state.app.activePiece,
     frameClass,
@@ -96,10 +114,11 @@ const mapDispatchToProps = dispatch => {
 class Painting extends Component {
 
   render() {
-    const { root, classes, ratio, vpH, vpW, bottomH, naviH, activeId, frameClass, matClass, imgClass, frameHeight } = this.props;
+    const { root, classes, ratio, vpH, naviH, filtersH, listH, activeId, frameClass, matClass, imgClass, frameHeight } = this.props;
     
     let tile = store.getState().art.artwork.find(art => art.id === activeId );
-    let painting = null;
+    let painting = null, 
+        wrapperClasses = [classes.wrapper];
 
     if (tile === undefined) {
       tile = {
@@ -112,20 +131,35 @@ class Painting extends Component {
       );
     } else {
       const appBar = document.getElementById('app-bar');
-      const appBarH = appBar && appBar.clientHeight;
-      
-      const canvasH = (ratio === "horizontal") ? (vpH - appBarH - bottomH - naviH) : (vpH - appBarH - bottomH)
-      const maxH = Math.round(canvasH - (Math.min(vpH, vpW) * 0.20)); 
+      const appBarH = appBar && appBar.clientHeight;      
+      let canvasH;
 
+      switch(ratio) {
+        case "wide":
+          canvasH = (vpH - appBarH - naviH);
+          break;
+
+        case "horizontal":
+          canvasH = (vpH - appBarH - naviH - listH);
+          break;
+
+        default:
+        case "vertical":
+          canvasH = (vpH - appBarH - naviH - listH - filtersH);
+          wrapperClasses.push(classes.wrapperVert)
+          break;
+      }
+
+      const maxH = Math.round(canvasH); 
 
       if (tile.hasFrames || (frameClass === null && matClass === null && imgClass === null)) {
-        const imgStyle = { maxHeight: maxH + 'px' };
+        const imgStyle = { maxHeight: 'calc(' + (maxH + 10) + 'px - 20vmin)' };
 
         painting = <img src={root +"img/" + tile.img} alt={tile.title} className={classes.img + " " + classes.shadow} style={imgStyle} />;
 
       } else {
         const frameStyle = { maxHeight: maxH + 'px' };
-        const imgStyle = { maxHeight: 'calc(' + maxH + 'px - ' + frameHeight +')'};
+        const imgStyle = { maxHeight: 'calc(' + (maxH + 10) + 'px - (2 * ' + mainMargin +') - ' + frameHeight +')'};
 
         painting =
           <Grid container spacing={0} direction="column" className={classes.frame + " " + classes.shadow + " " + classes[frameClass]} style={frameStyle}>
@@ -139,8 +173,9 @@ class Painting extends Component {
     return (
         <Grid item className={classes.root}>
           <Avatar className={classes.number}>{tile.id}</Avatar>
-          <div className={classes.wrapper}>
+          <div className={wrapperClasses.join(" ")}>
             <Grid container wrap="nowrap" direction="row" spacing={0} justify="center" alignContent="center" alignItems="center" className={classes.innerContainer}>
+
               <Grid item container spacing={0} direction="row" wrap="nowrap" justify="center">
                 <Grid item className={classes.sheetContainer}>
                 </Grid>
@@ -158,4 +193,4 @@ class Painting extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Painting));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles, frameJSS)(Painting));

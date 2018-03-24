@@ -5,21 +5,20 @@ import { connect } from 'react-redux';
 import GridListTile from 'material-ui/GridList/GridListTile';
 import GridListTileBar from 'material-ui/GridList/GridListTileBar';
 import { withStyles } from 'material-ui/styles';
-// import Typography from 'material-ui/Typography';
 
 import { setActivePiece } from '../modules/appState';
 
 const styles = theme => ({
   tileHors: {
-    // width: 'auto !important',
-    height: '100%',
+    height: 'calc(100% - 18px)',
     display: 'inline-block',
-    margin: '0 20px',
+    margin: '12px 10px 0px',
     justifyContent: 'center',
     justifyItems: 'center',
   },
   tileVert: {
-    width: '100%',
+    width: '70%',
+    margin: '0 15%',
     textAlign: 'center',
   },
   tileGrid: {
@@ -40,49 +39,50 @@ const styles = theme => ({
     maxHeight: '30vmin',
     height: 'calc(100% - 20px)',
     width: 'auto',
-    [theme.breakpoints.up('md')]: {
-      maxHeight: '22vmin',
-    },
-    [theme.breakpoints.up('xl')]: {
-      maxHeight: '20vmin',
-    },
   },
   imgHors: {
-    margin: '18px 0 10px',
-    height: 'calc(100% - 40px)',
+    height:'100%',
   },
   imgVert: {
     margin: '25px 0',
-    width: '70%',
+    width: '100%',
     height: 'auto',
   },
   imgGrid: {
-    margin: '0 10px 20px',
+    margin: '0 0 25px',
     [theme.breakpoints.up('md')]: {
-      margin: '30px',
+      margin: '0 0 30px',
     },
   },
   active: {
     border: "3px solid orange",
   },
   title: {
-    // color: theme.palette.primary.light,
     color: 'white',
     fontSize: '11px',
     fontWeight: 400,
-    textAlign: 'center',
+    textAlign: 'left',
     [theme.breakpoints.up('md')]: {
       fontSize: '14px',
     },
   },
+  titleWrap: {
+    margin: 0,
+  },
   titleGrid: {
-    fontSize: '14px',
+    fontSize: '12px',
+    [theme.breakpoints.up('md')]: {
+      fontSize: '14px',
+    },
   },
   titleBar: {
     background: 'transparent',
-    height: '22px',
-    // background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
+    height: '24px',
 
+  },
+  titleBarRow: {
+    background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,.15) 100%)',
+    padding: '8px',
   },
 });
 
@@ -108,6 +108,7 @@ class Tile extends Component {
 
     let tileClasses = "";
     let imgClasses = classes.img + ((tile.id === activeId) ? " "+ classes.active : "");
+    let titleBarClasses = [classes.titleBar];
     let titleClasses = classes.title;
 
     switch (direction) {
@@ -118,6 +119,7 @@ class Tile extends Component {
 
       case "row":
         tileClasses = classes.tileHors;
+        titleBarClasses.push(classes.titleBarRow);
         imgClasses += " " + classes.imgHors;
         break;
 
@@ -137,10 +139,11 @@ class Tile extends Component {
           <img src={root +"img/" + tile.img} alt={tile.title} className={imgClasses} />
 
           <GridListTileBar
-            title={tile.id +". "+ tile.title}
+            title={tile.id + ". " + tile.title}
             classes={{
-              root: classes.titleBar,
+              root: titleBarClasses.join(" "),
               title: titleClasses,
+              titleWrap: classes.titleWrap,
             }} 
           />
         </Link>

@@ -1,5 +1,4 @@
 import appData from '../data/data';
-console.log("appData: ", appData);
 
 const initialState = appData;
 

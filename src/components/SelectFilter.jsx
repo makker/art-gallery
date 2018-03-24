@@ -15,12 +15,20 @@ const styles = theme => ({
       fontSize: 'initial',
     },
   },
-  select: {
-    fontSize: 'calc(9px + .8vmin)',
+  formControlVert: {
+    margin: 'calc(2vh - 10px) calc(5px + .3vw)',
+    maxWidth: 'calc(80px + 2vw)',
+    marginBottom: '13px',
     [theme.breakpoints.up('md')]: {
       fontSize: 'initial',
     },
-  }
+  },
+  select: {
+    fontSize: 'calc(11px + .8vmin)',
+    [theme.breakpoints.up('md')]: {
+      fontSize: 'initial',
+    },
+  },
 });
 
 class SelectFilter extends Component {
@@ -29,6 +37,7 @@ class SelectFilter extends Component {
     const {
       classes,
       className,
+      ratio,
       id,
       label,
       data,
@@ -36,9 +45,14 @@ class SelectFilter extends Component {
       defaultLabel,
       multiple,
       change } = this.props;
+
+    const formControlClasses = [classes.formControl, className];
+    if (ratio !== "vertical") {
+      formControlClasses.push(classes.formControlVert);
+    }
     
     return (
-      <FormControl className={classes.formControl + " " + className}>
+      <FormControl className={formControlClasses.join(" ")}>
         <InputLabel htmlFor={id +"-select"}>{label}</InputLabel>
         <Select
           value={selectedValue}
@@ -47,7 +61,9 @@ class SelectFilter extends Component {
             id: id +'-select',
           }}
           multiple={multiple}
-          autoWidth={multiple} className={classes.select}>
+          autoWidth={multiple} 
+          className={classes.select}
+          style={{ marginTop: 'calc(8px + .4vh)' }}>
           <MenuItem key={0} value={0}>{ defaultLabel }</MenuItem>
           {data.map((item, index) => (
             <MenuItem key={item.id} value={item.id}>{item.value}</MenuItem>
@@ -59,7 +75,9 @@ class SelectFilter extends Component {
 }
 
 const mapStateToProps = state => {
-  return {};
+  return {
+    ratio: state.app.ratio,
+  };
 };
 
 const mapDispatchToProps = dispatch => {

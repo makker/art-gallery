@@ -18,6 +18,12 @@ const styles = theme => ({
   appBar: {
     position: 'static',
   },
+  toolbar: {
+    minHeight: '40px',
+    [theme.breakpoints.up('md')]: {
+      minHeight: '64px',
+    },
+  },
   flex: {
     flex: 1,
   },
@@ -38,7 +44,7 @@ function SimpleAppBar(props) {
   return (
     <Grid item id="app-bar">
       <AppBar color="default" className={classes.appBar}>
-        <Toolbar>
+        <Toolbar className={classes.toolbar}>
           <Typography variant="title" color="inherit" className={classes.flex}>
             <Link to={{pathname: root, search: query }} color="white" className={classes.link}>
                 Galleria Haili

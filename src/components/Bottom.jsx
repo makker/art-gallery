@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 
-import Footer from './Footer';
+import Filter from './Filter';
 import Navi from './Navi';
 import PaintingList from './PaintingList';
 import { BOTTOM_HEIGHT } from '../modules/appState';
@@ -54,18 +54,22 @@ class Bottom extends Component {
   render() {
     const { root, classes, ratio } = this.props;
 
-    return ((ratio === "horizontal") ? (
+    return ((ratio === "wide") ? (
+      <Grid item container direction="row" spacing={0} className={classes.bottomVert} id="bottom">
+        <Filter></Filter>
+        <Route exact path={root +"piece/:id"} render={() => <PaintingList direction="row" />} />
+      </Grid>
+    ) : (ratio === "horizontal") ? (
       <Grid item id="bottom">
-        <Footer></Footer>
+        <Filter></Filter>
       </Grid>
     ) : (
-        <Grid item container direction="column" spacing={0} className={classes.bottomVert} id="bottom">
-          <Route exact path={root +"piece/:id"} component={Navi} />
-          <Route exact path={root +"piece/:id"} render={() => <PaintingList direction="row" />} />
-          <Footer></Footer>
-        </Grid>
-      )
-    );
+      <Grid item container direction="column" spacing={0} className={classes.bottomVert} id="bottom">
+        <Route exact path={root +"piece/:id"} component={Navi} />
+        <Route exact path={root +"piece/:id"} render={() => <PaintingList direction="row" />} />
+        <Filter></Filter>
+      </Grid>
+    ));
   }
 }
 

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { Route, withRouter } from 'react-router';
 
@@ -9,72 +10,116 @@ import { FormControl } from 'material-ui/Form';
 import { InputLabel } from 'material-ui/Input';
 
 //import { INFOSHEET, toggleInfoSheet, toggleInfoSheet2 } from '../modules/appState';
-import { setTypeFilter, setVirtualFrame, setSellStatus, toggleInfoSheet, setTopics } from '../modules/appState';
+import { setTypeFilter, setVirtualFrame, setSellStatus, toggleInfoSheet, setTopics, FILTERS_HEIGHT } from '../modules/appState';
 import frames from '../data/frames';
 import { setQueryStrings, removeQueryStrings } from '../modules/utils';
 import SelectFilter from './SelectFilter';
 
 const styles = theme => ({
   root: {
-    // position: 'absolute',
-    // bottom: 0,
     display: 'flex',
     justifyContent: 'center',
     width: '100%',
-    minHeight: '92px',
     backgroundColor: '#282828',
     color: 'white',
     padding: '1vh 2vw ',
-    overflowX: 'hidden',
+    overflow: 'hidden',
     [theme.breakpoints.up('sm')]: {
       padding: '1vh calc(4vw - 30px)',
-      minHeight: '68px',
-      height: '8vh',
     },
+  },
+  rootHorsGrid: {
+    minHeight: '60px',
+    height: '7.5vh',
+  },
+  rootHorsPiece: {
+    minHeight: '92px',
+    [theme.breakpoints.up('sm')]: {
+      minHeight: '60px',
+      height: '7.5vh',
+    },
+  },
+  rootVert: {
+    width: 'calc(50px + 10vw)',
+    maxWidth: '150px',
+    height: '100%',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    padding: '2vh 0',
   },
   container: {
     flex: '0 1 auto',
-    minHeight: '75px',
-    height: '8vh',
     width: 'auto',
     padding: '0 2vw',
     justifyContent: 'center',
-    '&:first-child': {
-      borderRight: 'solid 1px white',
-    },
+  },
+  containerHors: {
+    minHeight: '75px',
+    height: '8vh',
     [theme.breakpoints.up('sm')]: {
       minHeight: '48px',
       height: '6vh',
       marginRight: '-1px',
+    },
+  },
+  containerHorsPiece: {
+    '&:first-child': {
+      borderRight: 'solid 1px white',
+    },
+    [theme.breakpoints.up('sm')]: {
       borderLeft: 'solid 1px white',
       borderRight: 'solid 1px white',
     },
   },
-  formItem: {
-    alignItems: 'center',
+  containerVert: {
+    flexDirection: 'column',
+    padding: '1vh 10px',
+    alignItems: 'left',
+    flexWrap: 'nowrap',
+  },
+  formItems: {
+    alignItems: 'left',
     display: 'flex',
   },
-  marginFixer: {},
+  formItemsVert: {
+    flexDirection: 'column',
+    alignItems: 'left',
+    display: 'flex',
+  },
   switch: {
-    margin: '10px -10px -10px',
+    margin: '1vh -14px -10px',
     transform: 'scale(.8)',
     height: '44px',
     [theme.breakpoints.up('sm')]: {
+      transform: 'scale(.85)',
+    },
+    [theme.breakpoints.up('md')]: {
       transform: 'scale(1)',
-      margin: '10px 0 -10px',
-    }
+    },
   },
   groupLabel: {
     fontSize: 'calc(8px + 1vmin)',
-    [theme.breakpoints.up('md')]: {
-      display: 'block',
-    },
+  },
+  groupLabelVert: {
+    fontSize: 'calc(10px + 1vmin)',
+    padding: '1.5vh calc(5px + .3vw) 2vh',
   },
   groupDivider: {
     margin: '0 .5vw 0 1vw',
     [theme.breakpoints.up('sm')]: {
       margin: '0 1vw 0 1.5vw',
     },
+  },
+  groupDividerVert: {
+    margin: '0 0',
+    [theme.breakpoints.up('sm')]: {
+    },
+  },
+  formControl: {
+    margin: '0 calc(5px + .3vw)',
+  },
+  formControlVert: {
+    margin: '0 calc(5px + .3vw)',
   },
 });
 
@@ -92,18 +137,28 @@ const mapDispatchToProps3 = dispatch => {
   };
 }; */
 
-class Footer extends Component {
+class Filter extends Component {
+
+  componentDidMount() {
+    const { setFiltersHeight } = this.props;
+    setFiltersHeight(ReactDOM.findDOMNode(this).clientHeight);
+  }
+
+  componentDidUpdate() {
+    const { setFiltersHeight } = this.props;
+    setFiltersHeight(ReactDOM.findDOMNode(this).clientHeight);
+  }
 
   render() {
     const { 
       root,
-      classes, 
+      classes, ratio,
       infoOpen, toggleInfoSheet,
       typeFilter, types, setType, 
       virtualFrame, setFrame, 
       sellStatuses, sellFilter, setSell, 
       topics, topicFilters, setTopics,
-      history } = this.props;
+      history, path } = this.props;
 
     function objectToArray(obj) {
       return Object.keys(obj).map(key => ({ id: parseInt(key, 10), value: obj[key] }))
@@ -159,42 +214,66 @@ class Footer extends Component {
       history.push({ search: search });
     }
 
-    return (
-      <Grid item className={classes.root}>
-        <Grid container className={classes.container} spacing={0}>
+    const rootClasses = [classes.root];
+    const containerClasses = [classes.container];
+    const formItemsClasses = [classes.formItems];
+    const groupLabelClasses = [classes.groupLabel];
+    const groupDividerClasses = [classes.groupDivider];
 
-          <Grid item className={classes.groupDivider} >
-            <div className={classes.groupLabel}>
-              Asetukset
-            </div>
+    if (ratio === "vertical") {
+      rootClasses.push((path === root) ? classes.rootHorsGrid : classes.rootHorsPiece);
+      containerClasses.push(classes.containerHors);
+      if (path !== root) containerClasses.push(classes.containerHorsPiece);
+
+    } else {
+      rootClasses.push(classes.rootVert);
+      containerClasses.push(classes.containerVert);
+      formItemsClasses.push(classes.formItemsVert);
+      groupLabelClasses.push(classes.groupLabelVert);
+      groupDividerClasses.push(classes.groupDividerVert);
+    }
+
+    return (
+      <Grid item className={rootClasses.join(" ")}>
+
+        <Route path={root +"piece"} render={() =>
+          <Grid container className={containerClasses.join(" ")} spacing={0}>
+            <Grid item className={groupDividerClasses.join(" ")} >
+              <div className={groupLabelClasses.join(" ")}>
+                Asetukset
+              </div>
+            </Grid>
+            <Grid item className={formItemsClasses.join(" ") }>
+
+              <Route exact path={root +"piece/:id"} render={() => 
+                <SelectFilter id="frame" label="Kehys" data={frames.map(item => ({ id: item.id, value: item.name }))} selectedValue={virtualFrame} defaultLabel="Ei kehystä" change={changeValue} className={ classes.marginFixer } />
+              } />{ /* END OF ROUTE */}
+
+              <FormControl className={classes.formControl + " " + classes.marginFixer}>
+                <InputLabel htmlFor="info-switch" shrink={true}>Info</InputLabel>
+                <Switch
+                  checked={infoOpen}
+                  onChange={(e) => changeOpen(e.target.checked)}
+                  value="info"
+                  color="primary"
+                  //classes={{ icon: classes.icon }}
+                  className={classes.switch}
+                  inputProps={{
+                    id: 'info-switch',
+                  }}
+                />
+              </FormControl>
+            </Grid>
           </Grid>
-          <Grid item className={classes.formItem }>
-            <Route exact path={root +"piece/:id"} render={() => 
-              <SelectFilter id="frame" label="Kehys" data={frames.map(item => ({ id: item.id, value: item.name }))} selectedValue={virtualFrame} defaultLabel="Ei kehystä" change={changeValue} className={ classes.marginFixer } />
-            } />
-            <FormControl className={classes.formControl + " " + classes.marginFixer}>
-              <InputLabel htmlFor="info-switch" shrink={true}>Info</InputLabel>
-              <Switch
-                checked={infoOpen}
-                onChange={(e) => changeOpen(e.target.checked)}
-                value="info"
-                color="primary"
-                classes={{ icon: classes.icon }}
-                className={classes.switch}
-                inputProps={{
-                  id: 'info-switch',
-                }}
-              />
-            </FormControl>
-          </Grid>
-        </Grid>
-        <Grid container className={classes.container} spacing={0}>
-          <Grid item className={classes.groupDivider} >
-            <div className={classes.groupLabel}>
+        } />{ /* END OF ROUTE */}
+
+        <Grid container className={containerClasses.join(" ")} spacing={0}>
+          <Grid item className={groupDividerClasses.join(" ")} >
+            <div className={groupLabelClasses.join(" ")}>
               Rajaa
             </div>
           </Grid>
-          <Grid item className={classes.formItem}>
+          <Grid item className={formItemsClasses.join(" ")}>
             <SelectFilter id="type" label="Tyyppi" data={objectToArray(types)} selectedValue={typeFilter} defaultLabel="Kaikki" change={changeValue} />
 
             <SelectFilter id="sell" label="Myynnissä" data={objectToArray(sellStatuses)} selectedValue={sellFilter} defaultLabel="Kaikki" change={changeValue} />
@@ -210,6 +289,7 @@ class Footer extends Component {
 const mapStateToProps = state => {
   return {
     root: state.app.root,
+    ratio: state.app.ratio,
     path: state.router.location.pathname,
     virtualFrame: state.app.virtualFrame,
     infoOpen: state.app.infoSheetOpen,
@@ -229,7 +309,13 @@ const mapDispatchToProps = dispatch => {
     setSell: setSellStatus(dispatch),
     toggleInfoSheet: toggleInfoSheet(dispatch),
     setTopics: setTopics(dispatch),
+    setFiltersHeight: (height) => {
+      dispatch({
+        type: FILTERS_HEIGHT,
+        height: height,
+      })
+    }
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(Footer)));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(Filter)));

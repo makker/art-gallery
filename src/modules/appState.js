@@ -11,7 +11,8 @@ export const PREV_ITEM = 'prevItem/SET';
 export const NEXT_ITEM = 'nextItem/SET';
 export const VIEWPORT_WIDTH = 'vpWidth/SET';
 export const VIEWPORT_HEIGHT = 'vpHeight/SET';
-export const BOTTOM_HEIGHT = 'bottomHeight/SET';
+export const LIST_HEIGHT = 'listHeight/SET';
+export const FILTERS_HEIGHT = 'filtersHeight/SET';
 export const NAVI_HEIGHT = 'naviHeight/SET';
 export const TYPE_FILTER = 'typeFilter/SET';
 export const VIRTUAL_FRAME = 'virtualFrame/SET';
@@ -55,7 +56,8 @@ const initialState = {
   ratio: ratio(),
   viewportWidth: viewportWidth(),
   viewportHeight: viewportHeight(),
-  bottomH: 0,
+  listH: 0,
+  filtersH: 0,
   naviH: 0,
   typeFilter,
   virtualFrame,
@@ -67,6 +69,7 @@ const initialState = {
 };
 
 export default (state = initialState, action) => {
+  // console.log("action: ", action);
   switch (action.type) {
 
     case RATIO:
@@ -87,10 +90,16 @@ export default (state = initialState, action) => {
         viewportHeight: action.height,
       }
 
-    case BOTTOM_HEIGHT:
+    case LIST_HEIGHT:
       return {
         ...state,
-        bottomH: action.height,
+        listH: action.height,
+      }
+
+    case FILTERS_HEIGHT:
+      return {
+        ...state,
+        filtersH: action.height,
       }
 
     case NAVI_HEIGHT:

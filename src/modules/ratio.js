@@ -13,7 +13,7 @@ const ratio = () => {
     var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 
     const ratio = w / h;
-    const ratioStr = (ratio >= 1.1) ? "horizontal" : "vertical";
+    const ratioStr = (ratio >= 1.5) ? "wide" : (ratio >= 1.1) ? "horizontal" : "vertical";
 
     return ratioStr;
 }

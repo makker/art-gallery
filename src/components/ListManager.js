@@ -35,7 +35,6 @@ class ListManager extends Component {
       if (sellFilter !== 0 && piece.sellStatus !== sellFilter) {
         return false;
       }
-
       if (!topicFilters.includes(0) && !topicFilters.every(t => piece.topics.includes(t))) {
         return false;
       }
