@@ -22,7 +22,9 @@ const styles = theme => ({
     textAlign: 'center',
   },
   tileGrid: {
-    minWidth: '25%',
+    transform: 'scale(1)',
+    minWidth: '20%',
+    width: 'auto',
     margin: '4% 3%',
     [theme.breakpoints.up('md')]: {
       minWidth: '20%',
@@ -31,14 +33,18 @@ const styles = theme => ({
     [theme.breakpoints.up('lg')]: {
       minWidth: '15%',
       margin: '2% 1%',
-    },
+    },    
+  },
+  tileSubGrid: {
+    flex: "1 1 auto",
+    height: 'auto',
   },
   img: {
+    transform: 'scale(1)',
     minHeight: '50px',
     minWidth: '50px',
     maxHeight: '30vmin',
     height: 'calc(100% - 20px)',
-    width: 'auto',
   },
   imgHors: {
     height:'100%',
@@ -50,6 +56,7 @@ const styles = theme => ({
   },
   imgGrid: {
     margin: '0 0 25px',
+    width: 'auto',
     [theme.breakpoints.up('md')]: {
       margin: '0 0 30px',
     },
@@ -62,12 +69,14 @@ const styles = theme => ({
     fontSize: '11px',
     fontWeight: 400,
     textAlign: 'left',
-    [theme.breakpoints.up('md')]: {
-      fontSize: '14px',
-    },
   },
   titleWrap: {
     margin: 0,
+  },
+  titleVert: {
+    [theme.breakpoints.up('md')]: {
+      fontSize: '14px',
+    },
   },
   titleGrid: {
     fontSize: '12px',
@@ -77,12 +86,16 @@ const styles = theme => ({
   },
   titleBar: {
     background: 'transparent',
-    height: '24px',
+    height: '22px',
 
   },
   titleBarRow: {
-    background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,.15) 100%)',
-    padding: '8px',
+    background: 'rgba(0,0,0,0.6)',
+    textTransform: 'uppercase',
+    padding: '4px 8px 0',
+  },
+  barActive: {
+    background: 'rgba(60,36,18,0.95)',
   },
 });
 
@@ -92,6 +105,7 @@ const mapStateToProps = state => {
     root: state.app.root,
     activeId: state.app.activePiece,
     query: state.router.location.search,
+    viewportWidth: state.app.viewportWidth,
   };
 }; 
 
@@ -104,22 +118,25 @@ const mapDispatchToProps = dispatch => {
 class Tile extends Component {
 
   render() {
-    const { classes, root, query, direction, tile, setActivePiece, activeId } = this.props;
+    const { classes, root, query, direction, tile, viewportWidth,setActivePiece, activeId } = this.props;
 
     let tileClasses = "";
-    let imgClasses = classes.img + ((tile.id === activeId) ? " "+ classes.active : "");
+    let tileSubClasses = [];
+    let imgClasses = classes.img;
     let titleBarClasses = [classes.titleBar];
     let titleClasses = classes.title;
 
     switch (direction) {
       case "column":
         tileClasses = classes.tileVert;
-        imgClasses += " " + classes.imgVert;
+        imgClasses += " " + classes.imgVert + ((tile.id === activeId) ? " " + classes.active : "");
+        titleClasses += " "+ classes.titleVert;
         break;
 
       case "row":
         tileClasses = classes.tileHors;
         titleBarClasses.push(classes.titleBarRow);
+        if (tile.id === activeId) titleBarClasses.push(classes.barActive);
         imgClasses += " " + classes.imgHors;
         break;
 
@@ -127,16 +144,19 @@ class Tile extends Component {
         tileClasses = classes.tileGrid;
         imgClasses += " " + classes.imgGrid;
         titleClasses += " "+ classes.titleGrid;
+        tileSubClasses.push(classes.tileSubGrid);
         break;
 
       default:
         break;
     }
 
+    const imgFolder = (viewportWidth < 800) ? "150/" : "250/";
+
     return (
-      <GridListTile title={tile.title} className={tileClasses} >
-        <Link to={{ pathname: root +"piece/" + tile.id, search: query }} id={tile.id} onClick={() => setActivePiece(tile.id)}>
-          <img src={root +"img/" + tile.img} alt={tile.title} className={imgClasses} />
+      <GridListTile title={tile.title} className={tileClasses} classes={{ tile: tileSubClasses.join(" ") }}>
+        <Link to={{ pathname: root + "piece/" + tile.id, search: query }} id={tile.id} onClick={() => setActivePiece(tile.id)}>
+          <img src={root + "img/" + imgFolder + tile.img} alt={tile.title} className={imgClasses} />
 
           <GridListTileBar
             title={tile.id + ". " + tile.title}

@@ -93,6 +93,7 @@ const mapStateToProps = state => {
   return {
     root: state.app.root,
     vpH: state.app.viewportHeight,
+    vpW: state.app.viewportWidth,
     ratio: state.app.ratio,
     listH: state.app.listH,
     filtersH: state.app.filtersH,
@@ -114,7 +115,7 @@ const mapDispatchToProps = dispatch => {
 class Painting extends Component {
 
   render() {
-    const { root, classes, ratio, vpH, naviH, filtersH, listH, activeId, frameClass, matClass, imgClass, frameHeight } = this.props;
+    const { root, classes, ratio, vpH, vpW, naviH, filtersH, listH, activeId, frameClass, matClass, imgClass, frameHeight } = this.props;
     
     let tile = store.getState().art.artwork.find(art => art.id === activeId );
     let painting = null, 
@@ -151,11 +152,37 @@ class Painting extends Component {
       }
 
       const maxH = Math.round(canvasH); 
+      let folder = "";
+      let width;
+
+      if (!isNaN(tile.width) && !isNaN(tile.height)) {
+        width = maxH * (tile.width / tile.height);
+
+      } else if (ratio === "wide") {
+        width = vpW * 0.55;
+
+      } else if (ratio === "horizontal") {
+        width = vpW * 0.6;
+
+      } else if (ratio === "vertical") {
+        width = vpW * 0.9;
+
+      }
+
+      if (width < 150) {
+        folder = "150/";
+      } else if (width < 250) {
+        folder = "250/";
+      } else if (width < 400) {
+        folder = "400/";
+      } else if (width < 700) {
+        folder = "700/";
+      }
 
       if (tile.hasFrames || (frameClass === null && matClass === null && imgClass === null)) {
         const imgStyle = { maxHeight: 'calc(' + (maxH + 10) + 'px - 20vmin)' };
 
-        painting = <img src={root +"img/" + tile.img} alt={tile.title} className={classes.img + " " + classes.shadow} style={imgStyle} />;
+        painting = <img src={root +"img/"+ folder + tile.img} alt={tile.title} className={classes.img + " " + classes.shadow} style={imgStyle} />;
 
       } else {
         const frameStyle = { maxHeight: maxH + 'px' };
@@ -164,31 +191,31 @@ class Painting extends Component {
         painting =
           <Grid container spacing={0} direction="column" className={classes.frame + " " + classes.shadow + " " + classes[frameClass]} style={frameStyle}>
             <Grid item className={classes.mat +" "+ classes[matClass]}>
-              <img src={root +"img/" + tile.img} alt={tile.title} className={classes.img + " " + classes[imgClass]} style={imgStyle} />
+            <img src={root + "img/" + folder + tile.img} alt={tile.title} className={classes.img + " " + classes[imgClass]} style={imgStyle} />
             </Grid>
           </Grid>
       }
     }
     
     return (
-        <Grid item className={classes.root}>
-          <Avatar className={classes.number}>{tile.id}</Avatar>
-          <div className={wrapperClasses.join(" ")}>
-            <Grid container wrap="nowrap" direction="row" spacing={0} justify="center" alignContent="center" alignItems="center" className={classes.innerContainer}>
+      <Grid item className={classes.root}>
+        <Avatar className={classes.number}>{tile.id}</Avatar>
+        <div className={wrapperClasses.join(" ")}>
+          <Grid container wrap="nowrap" direction="row" spacing={0} justify="center" alignContent="center" alignItems="center" className={classes.innerContainer}>
 
-              <Grid item container spacing={0} direction="row" wrap="nowrap" justify="center">
-                <Grid item className={classes.sheetContainer}>
-                </Grid>
-                <Grid item className={classes.imgContainer}>
-                { painting }
-                </Grid>
-                <Grid item className={classes.sheetContainer}>
-                  <InfoSheet data={tile} />
-                </Grid>
+            <Grid item container spacing={0} direction="row" wrap="nowrap" justify="center">
+              <Grid item className={classes.sheetContainer}>
+              </Grid>
+              <Grid item className={classes.imgContainer}>
+              { painting }
+              </Grid>
+              <Grid item className={classes.sheetContainer}>
+                <InfoSheet data={tile} />
               </Grid>
             </Grid>
-          </div>
-        </Grid>
+          </Grid>
+        </div>
+      </Grid>
     );
   }
 }

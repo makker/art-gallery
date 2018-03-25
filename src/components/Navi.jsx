@@ -44,6 +44,23 @@ const mapDispatchToProps = dispatch => {
 };
 
 class Navi extends Component {
+  constructor() {
+    super();
+    this.paintingHammer = null;
+  }
+  setNaviSwiper(eventType, id) {
+    const { setActivePiece, getPaintingHammer } = this.props;
+    const paintingHammer = getPaintingHammer();
+
+    // Clear old swiper events
+    if (paintingHammer && paintingHammer.handlers) {
+      delete paintingHammer.handlers[eventType];
+
+      paintingHammer.on(eventType, function (ev) {
+        setActivePiece(id)
+      });
+    }
+  };
 
   componentDidMount() {
     const { setNaviHeight } = this.props;
@@ -52,6 +69,7 @@ class Navi extends Component {
 
   componentDidUpdate() {
     const { setNaviHeight } = this.props;
+
     setNaviHeight(ReactDOM.findDOMNode(this).clientHeight);
   }
 
@@ -62,7 +80,10 @@ class Navi extends Component {
 
     let prevButton = null;
     let nextButton = null;
+
     if (currentId !== undefined) {
+
+      // TODO HAMMER VSTACKIIN JA PROPSINA
       if (currentIndex === 0) {
         prevButton = (<IconButton disabled={true}><NavigateBefore /></IconButton>);
       } else if(currentIndex > 0) {
@@ -72,6 +93,7 @@ class Navi extends Component {
             <IconButton disabled={(currentIndex < 0)}><NavigateBefore /></IconButton>
           </Link>);
 
+        this.setNaviSwiper('swiperight', prevId);
       }
       if (currentIndex === (filteredList.length - 1)) {
         nextButton = (<IconButton disabled={true}><NavigateNext /></IconButton>);
@@ -81,6 +103,8 @@ class Navi extends Component {
           <Link to={{ pathname: root +"piece/" + nextId, search: query }} onClick={() => setActivePiece(nextId)}>
             <IconButton disabled={(currentIndex < 0)}><NavigateNext /></IconButton>
           </Link>);
+
+        this.setNaviSwiper('swipeleft', nextId);
       }
     };
 

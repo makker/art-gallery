@@ -21,18 +21,21 @@ export const TOPICS = 'topics/SET';
 
 const host = window.location.hostname;
 let root;
-switch(host) {
-  case "localhost":
-    root = "/";
-    break;
 
+console.log("host: ", host);
+
+switch(host) {
   case "makker.github.io":
     root = "/art-gallery/";
     break;
 
-  default:
-  case "makker.net":
-    root = "/gallery/";
+  case "localhost":
+  case "gallery.makker.net":
+  case "gallery.makker.net.s3-website.eu-central-1.amazonaws.com":
+  case "haili.s3-website.eu-central-1.amazonaws.com":
+  case "d1c1jb8pememw0.cloudfront.net":
+  case "dirf8i44auhbn.cloudfront.net":
+    root = "/";
     break;
 }
 
@@ -69,7 +72,7 @@ const initialState = {
 };
 
 export default (state = initialState, action) => {
-  // console.log("action: ", action);
+  console.log("action: ", action);
   switch (action.type) {
 
     case RATIO:

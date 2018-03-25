@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import { Route } from 'react-router';
 import { connect } from 'react-redux';
+import Hammer from 'hammerjs';
 
 import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
@@ -36,8 +38,14 @@ const mapDispatchToProps = dispatch => {
 };
 
 class VStack extends Component {
+  
+  getPaintingHammer = () => {
+    return this.hammertime;
+  };
 
   componentDidMount() {
+    const myOptions = {};
+    this.hammertime = new Hammer(ReactDOM.findDOMNode(this), myOptions);
   }
 
   componentDidUpdate() {
@@ -51,9 +59,9 @@ class VStack extends Component {
         <Route exact path={root} render={() => <PaintingList direction="both" />} />          {/* GRID */}
 
         <Route exact path={root + "piece/:id"} render={() => ([
-          <Grid container spacing={0} alignContent="space-between" justify="center" key="painting" className={classes.contentContainer} direction="column" wrap="nowrap">
+          <Grid id="painting-cont" container spacing={0} alignContent="space-between" justify="center" key="painting" className={classes.contentContainer} direction="column" wrap="nowrap">
             <Painting />
-            <Navi />
+            <Navi getPaintingHammer={this.getPaintingHammer} />
           </Grid>, // Painting list when not wide
           (ratio !== "wide") && <PaintingList direction="row" key="list"></PaintingList>
         ])

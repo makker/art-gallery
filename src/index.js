@@ -15,7 +15,7 @@ import store from './data/store';
 
 import './assets/css/index.css';
 import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+//import registerServiceWorker from './registerServiceWorker';
 
 // kick off the polyfill!
 smoothscroll.polyfill();
@@ -34,4 +34,4 @@ ReactDOM.render(
     </Provider>, 
     document.getElementById('root'));
 
-registerServiceWorker();
+//registerServiceWorker();

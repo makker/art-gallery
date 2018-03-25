@@ -52,6 +52,8 @@ class App extends Component {
   render() {
     const { classes, root, ratio } = this.props;
 
+    console.log("root: ", root);
+
     return (
       <MuiThemeProvider theme={theme}>
         <Reboot />
