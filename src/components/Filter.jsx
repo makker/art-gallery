@@ -87,7 +87,7 @@ const styles = theme => ({
     display: 'flex',
   },
   switch: {
-    margin: '1vh -14px -10px',
+    margin: '1vh -17px -10px',
     transform: 'scale(.8)',
     height: '44px',
     [theme.breakpoints.up('sm')]: {
@@ -116,7 +116,7 @@ const styles = theme => ({
     },
   },
   formControl: {
-    margin: '0 calc(5px + .3vw)',
+    margin: '0 1vw',
   },
   formControlVert: {
     margin: '0 calc(5px + .3vw)',
@@ -153,6 +153,7 @@ class Filter extends Component {
     const { 
       root,
       classes, ratio,
+      filteredList,
       infoOpen, toggleInfoSheet,
       typeFilter, types, setType, 
       virtualFrame, setFrame, 
@@ -249,7 +250,7 @@ class Filter extends Component {
                 <SelectFilter id="frame" label="Kehys" data={frames.map(item => ({ id: item.id, value: item.name }))} selectedValue={virtualFrame} defaultLabel="Ei kehystä" change={changeValue} className={ classes.marginFixer } />
               } />{ /* END OF ROUTE */}
 
-              <FormControl className={classes.formControl + " " + classes.marginFixer}>
+              <FormControl className={classes.formControl}>
                 <InputLabel htmlFor="info-switch" shrink={true}>Info</InputLabel>
                 <Switch
                   checked={infoOpen}
@@ -270,7 +271,7 @@ class Filter extends Component {
         <Grid container className={containerClasses.join(" ")} spacing={0}>
           <Grid item className={groupDividerClasses.join(" ")} >
             <div className={groupLabelClasses.join(" ")}>
-              Rajaa
+              Rajaa ({ filteredList.length })
             </div>
           </Grid>
           <Grid item className={formItemsClasses.join(" ")}>
@@ -291,6 +292,7 @@ const mapStateToProps = state => {
     root: state.app.root,
     ratio: state.app.ratio,
     path: state.router.location.pathname,
+    filteredList: state.app.filteredList,
     virtualFrame: state.app.virtualFrame,
     infoOpen: state.app.infoSheetOpen,
     types: state.art.artworkType,
