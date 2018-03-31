@@ -75,6 +75,7 @@ class InfoRow extends Component {
       artist: "Taiteilija",
       type: "Tyyppi",
       year: "Vuosi",
+      location: "Paikka",
       archiveId: "Arkisto nro",
       hasFrames: "Kehystetty",
       width: "Leveys",
@@ -95,6 +96,7 @@ class InfoRow extends Component {
       case "year":
       case "archiveId":
       case "price":
+      case "location":
         visible = true;
         break;
 
