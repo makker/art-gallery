@@ -748,7 +748,7 @@ const appData = {
       year: 1983,
       archiveId: 85,
       type: OIL,
-      hasFrames: true,
+      hasFrames: false,
       topics: [LANDSCAPE, NATURE, AUTUMN, WATER],
       width: 43,
       height: 33,
