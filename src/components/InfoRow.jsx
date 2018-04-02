@@ -79,7 +79,7 @@ class InfoRow extends Component {
       archiveId: "Arkisto nro",
       hasFrames: "Kehystetty",
       width: "Leveys",
-      height: "Korkaus",
+      height: "Korkeus",
       sellStatus: "Status",
       price: "Hinta",
     };
