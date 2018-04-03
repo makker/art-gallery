@@ -82,6 +82,7 @@ class InfoRow extends Component {
       height: "Korkeus",
       sellStatus: "Status",
       price: "Hinta",
+      notice: "Huomaa",
     };
     let visible = false,
         label = labels[id] || "",
@@ -97,6 +98,7 @@ class InfoRow extends Component {
       case "archiveId":
       case "price":
       case "location":
+      case "notice":
         visible = true;
         break;
 
