@@ -30,15 +30,13 @@ const styles = theme => ({
   formItems: {
     position: 'absolute',
     display: 'flex',
+    opacity: ".1",
     transition: 'opacity 1.5s ease-out 1.5s',
     paddingLeft: '1vw',
   },
-  formItemsFs: {
-    opacity: ".1",
-  },
   navi: {
     textAlign: 'center',
-    "&:hover div": {
+    "&:hover div, &:hover button": {
       transition: 'opacity .3s ease-out 0s',
       opacity: 1,
     }
@@ -61,6 +59,8 @@ const styles = theme => ({
     right: '24px',
     width: 'auto',
     fontSize: '24px',
+    opacity: ".3",
+    transition: 'opacity 1.5s ease-out 1.5s',
   },
 });
 

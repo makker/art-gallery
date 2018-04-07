@@ -104,7 +104,7 @@ class App extends Component {
               <Filter ratio={ratio} />
             </VStack>
           </Grid>            
-        )};
+        )}
       </MuiThemeProvider>
     );
   }
