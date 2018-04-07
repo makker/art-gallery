@@ -99,6 +99,7 @@ const mapStateToProps = state => {
     filtersH: state.app.filtersH,
     naviH: state.app.naviH,
     activeId: state.app.activePiece,
+    fullscreenOn: state.app.fullscreenOn,
     frameClass,
     imgClass,
     matClass,
@@ -115,7 +116,7 @@ const mapDispatchToProps = dispatch => {
 class Painting extends Component {
 
   render() {
-    const { root, classes, ratio, vpH, vpW, naviH, filtersH, listH, activeId, frameClass, matClass, imgClass, frameHeight } = this.props;
+    const { root, classes, ratio, vpH, vpW, naviH, filtersH, listH, activeId, frameClass, matClass, imgClass, frameHeight, fullscreenOn } = this.props;
     
     let tile = store.getState().art.artwork.find(art => art.id === activeId );
     let painting = null, 
@@ -135,23 +136,29 @@ class Painting extends Component {
       const appBarH = appBar && appBar.clientHeight;      
       let canvasH;
 
-      switch(ratio) {
-        case "wide":
-          canvasH = (vpH - appBarH - naviH);
-          break;
+      if (fullscreenOn) {
+        canvasH = vpH - naviH;
 
-        case "horizontal":
-          canvasH = (vpH - appBarH - naviH - listH);
-          break;
+      } else {
+        switch(ratio) {
+          case "wide":
+            canvasH = (vpH - appBarH - naviH);
+            break;
 
-        default:
-        case "vertical":
-          canvasH = (vpH - appBarH - naviH - listH - filtersH);
-          wrapperClasses.push(classes.wrapperVert)
-          break;
+          case "horizontal":
+            canvasH = (vpH - appBarH - naviH - listH);
+            break;
+
+          default:
+          case "vertical":
+            canvasH = (vpH - appBarH - naviH - listH - filtersH);
+            wrapperClasses.push(classes.wrapperVert)
+            break;
+        }
       }
 
       const maxH = Math.round(canvasH); 
+      console.log("maxH: ", maxH);
       let folder = "";
       let width;
 
@@ -202,7 +209,6 @@ class Painting extends Component {
         <Avatar className={classes.number}>{tile.id}</Avatar>
         <div className={wrapperClasses.join(" ")}>
           <Grid container wrap="nowrap" direction="row" spacing={0} justify="center" alignContent="center" alignItems="center" className={classes.innerContainer}>
-
             <Grid item container spacing={0} direction="row" wrap="nowrap" justify="center">
               <Grid item className={classes.sheetContainer}>
               </Grid>

@@ -50,19 +50,23 @@ class App extends Component {
   }
 
   render() {
-    const { classes, root, ratio } = this.props;
+    const { classes, root, path, ratio, fullscreenOn } = this.props;
 
-    console.log("root: ", root);
+    const topBar = (!fullscreenOn) ? <SimpleAppBar /> : null;
+    const filters = (!fullscreenOn) ? <Filter ratio={ratio} /> : null;
 
     return (
       <MuiThemeProvider theme={theme}>
         <Reboot />
         <ListManager />
-        {(ratio === "wide") ? (
+        {(fullscreenOn && (root !== path)) ? (
+          <VStack/>
+
+        ) : (ratio === "wide") ? (
           <Grid container direction="column" spacing={0} justify="space-between" className={classes.root} wrap="nowrap">
-            <SimpleAppBar />
+            { topBar }
             <Grid container direction="row" spacing={0} justify="flex-start" wrap="nowrap" style={{flex: '1 1 auto', height: '100%' }}>
-              <Filter ratio={ratio} />
+              { filters }
               <Route exact path={root} render={() => 
                 <PaintingList direction="both" /> // Grid list
               } />
@@ -75,20 +79,30 @@ class App extends Component {
 
         ) : (ratio === "horizontal") ? (
           <Grid container direction="column" spacing={0} justify="space-between" className={classes.root} wrap="nowrap">
-            <SimpleAppBar />
-            <Grid container direction="row" spacing={0} justify="flex-start" wrap="nowrap" style={{flex: '1 1 auto', height: '100%' }}>
-              <Filter ratio={ratio} />
+            { topBar }
+            <Grid container direction="row" spacing={0} justify="flex-start" wrap="nowrap" style={{ flex: '1 1 auto', height: '100%' }}>
+              {filters}
               <Route exact path={root} render={() => 
                 <PaintingList direction="both" /> // Grid list
               } />
-              <Route exact path={root + "piece/:id"} component={VStack} />
+              <Route exact path={root + "piece/:id"} render={() => (
+                <VStack>
+                  <PaintingList direction="row" key="list"></PaintingList>
+                </VStack>
+              )} />
             </Grid>
           </Grid>
 
-        ) : (
+        ) : ( // Vertical
           <Grid container direction="column" spacing={0} justify="space-between" className={classes.root} wrap="nowrap">
-            <SimpleAppBar />
-            <VStack />
+            { topBar }
+            <VStack>
+              <Route exact path={root} render={() => <PaintingList direction="both" />} />          {/* GRID */}
+              <Route exact path={root + "piece/:id"} render={() => (
+                <PaintingList direction="row" key="list"></PaintingList>
+              )} />
+              <Filter ratio={ratio} />
+            </VStack>
           </Grid>            
         )};
       </MuiThemeProvider>
@@ -100,6 +114,8 @@ const mapStateToProps = state => ({
   match: state.router.match,
   root: state.app.root,
   ratio: state.app.ratio,
+  fullscreenOn: state.app.fullscreenOn,
+  path: state.router.location.pathname,
 });
 
 const mapDispatchToProps = dispatch => {

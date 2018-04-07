@@ -5,6 +5,7 @@ import ratio, { viewportWidth, viewportHeight } from '../modules/ratio';
 export const RATIO = 'ratio/CHANGE';
 export const ROOT = 'root/SET';
 export const INFOSHEET = 'infoSheet/TOGGLE';
+export const FULLSCREEN = 'fullscreen/TOGGLE';
 export const ACTIVE_PIECE = 'activePiece/SET';
 export const FILTERD_LIST = 'filteredList/SET';
 export const PREV_ITEM = 'prevItem/SET';
@@ -29,12 +30,7 @@ switch(host) {
     root = "/art-gallery/";
     break;
 
-  case "localhost":
-  case "gallery.makker.net":
-  case "gallery.makker.net.s3-website.eu-central-1.amazonaws.com":
-  case "haili.s3-website.eu-central-1.amazonaws.com":
-  case "d1c1jb8pememw0.cloudfront.net":
-  case "dirf8i44auhbn.cloudfront.net":
+  default:
     root = "/";
     break;
 }
@@ -55,6 +51,7 @@ const topicFilters = (query.get("topics") && query.get("topics").split(".").map(
 const initialState = { 
   root,
   infoSheetOpen: infoOpen,
+  fullscreenOn: false,
   activePiece: id,
   ratio: ratio(),
   viewportWidth: viewportWidth(),
@@ -114,6 +111,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         infoSheetOpen: action.open,
+      };
+
+    case FULLSCREEN:
+      return {
+        ...state,
+        fullscreenOn: action.payload,
       };
 
     case ACTIVE_PIECE:
@@ -182,6 +185,13 @@ export const toggleInfoSheet = dispatch => open => {
   dispatch({
       type: INFOSHEET,
       open: open,
+  });
+};
+
+export const toggleFullscreen = dispatch => payload => {
+  dispatch({
+    type: FULLSCREEN,
+    payload,
   });
 };
 

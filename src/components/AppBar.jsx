@@ -28,6 +28,7 @@ const styles = theme => ({
     flex: 1,
   },
   gridButton: {
+    width: 'auto',
     marginLeft: 10,
     marginRight: 0,
   },
