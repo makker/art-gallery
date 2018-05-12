@@ -44,11 +44,12 @@ class ListManager extends Component {
     setFilteredList(filteredList);
 
     // If active id in filtered list, if not pick 1st from filtered
-    if (path !== "/" && !filteredList.some(p => p.id === activeId)) {
+    if ((path !== "/" && path !== "/contact") && !filteredList.some(p => p.id === activeId)) {
       activeId = filteredList[0] && filteredList[0].id;
       history.push({ pathname: root + "piece/" + activeId, search });
       setActivePiece(activeId);
     }
+    
     const activeIndex = filteredList.findIndex(p => p.id === activeId);
     const prevIndex = activeIndex - 1;
     const nextIndex = activeIndex + 1;

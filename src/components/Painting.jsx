@@ -158,7 +158,7 @@ class Painting extends Component {
       }
 
       const maxH = Math.round(canvasH); 
-      console.log("maxH: ", maxH);
+      
       let folder = "";
       let width;
 

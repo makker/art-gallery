@@ -139,7 +139,6 @@ class Navi extends Component {
 
   render() {
     const { root, classes, artwork, query, 
-      ratio,
       activeId, setActivePiece, 
       filteredList,
       infoOpen, toggleInfoSheet,
@@ -155,7 +154,6 @@ class Navi extends Component {
 
     function changeOpen(open) {
       toggleInfoSheet(open);
-      console.log("open: ", open);
 
       const search = "?" + (
         (open) ?

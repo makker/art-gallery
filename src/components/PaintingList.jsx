@@ -192,7 +192,6 @@ class PaintingList extends Component {
     const scrollClasses = [];
     const scrollInnerClasses = [classes.scrollInner];
 
-    console.log("direction: ", direction);
     switch(direction) {
       case "column":
         rootClasses += " " + classes.rootSide;
@@ -227,7 +226,6 @@ class PaintingList extends Component {
       backgroundColor: 'rgba(200, 200, 200, .2)', 
       borderRadius: 'inherit',
     };
-    console.log("scrollInnerClasses: ", scrollInnerClasses);
     
     return (
       <Grid item className={rootClasses} >
