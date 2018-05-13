@@ -75,7 +75,11 @@ class App extends Component {
                 <PaintingList direction="column"></PaintingList> // Column list
               } />
               <Route exact path={root + "piece/:id"} component={VStack} />
-              <Route exact path={root + "contact"} component={Contact} />
+
+              <Route exact path={root + "contact"} render={() =>
+                <PaintingList direction="column"></PaintingList> // Column list
+              } />
+              <Route path={root + "contact"} component={Contact} />
             </Grid>
           </Grid>
 
@@ -92,7 +96,12 @@ class App extends Component {
                   <PaintingList direction="row" key="list"></PaintingList>
                 </VStack>
                   )} />
-              <Route exact path={root + "contact"} component={Contact} />
+              <Route path={root + "contact"} render={() => (
+                <VStack>
+                  <Contact />
+                  <PaintingList direction="row" key="list"></PaintingList>
+                </VStack>
+              )} />
             </Grid>
           </Grid>
 
@@ -104,7 +113,10 @@ class App extends Component {
               <Route exact path={root + "piece/:id"} render={() => (
                 <PaintingList direction="row" key="list"></PaintingList>
                     )} />
-              <Route exact path={root + "contact"} component={Contact} />
+              <Route path={root + "contact"} component={Contact} />
+              <Route path={root + "contact"} render={() => (
+                  <PaintingList direction="row" key="list"></PaintingList>
+                )} />
               <Filter ratio={ratio} />
             </VStack>
           </Grid>            

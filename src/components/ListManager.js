@@ -57,19 +57,21 @@ class ListManager extends Component {
     document.onkeydown = e => {
       e = e || window.event;
 
-      const code = parseInt(e.keyCode, 10);
+      if (path !== "/contact") {
+        const code = parseInt(e.keyCode, 10);
 
-      if (code === 37) {
-        if (prevIndex >= 0) {
-          const prevId = filteredList[prevIndex].id;
-          history.push({ pathname: root +"piece/" + prevId, search: query});
-          setActivePiece(prevId);
-        }
-      } else if (code === 39) {
-        if (nextIndex < filteredList.length) {
-          const nextId = filteredList[nextIndex].id;
-          history.push({ pathname: root +"piece/" + nextId, search: query});
-          setActivePiece(nextId);
+        if (code === 37) {
+          if (prevIndex >= 0) {
+            const prevId = filteredList[prevIndex].id;
+            history.push({ pathname: root +"piece/" + prevId, search: query});
+            setActivePiece(prevId);
+          }
+        } else if (code === 39) {
+          if (nextIndex < filteredList.length) {
+            const nextId = filteredList[nextIndex].id;
+            history.push({ pathname: root +"piece/" + nextId, search: query});
+            setActivePiece(nextId);
+          }
         }
       }
     };
