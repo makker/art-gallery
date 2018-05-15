@@ -75,7 +75,6 @@ class ListManager extends Component {
         }
       }
     };
-    
   }
 
   componentDidMount() {

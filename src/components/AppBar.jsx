@@ -50,8 +50,6 @@ const styles = theme => ({
 function SimpleAppBar(props) {
   const { classes, root, query, location } = props;
 
-  console.log("location", location)
-
   return (
     <Grid item id="app-bar">
       <AppBar color="default" className={classes.appBar}>

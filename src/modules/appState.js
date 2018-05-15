@@ -19,6 +19,9 @@ export const TYPE_FILTER = 'typeFilter/SET';
 export const VIRTUAL_FRAME = 'virtualFrame/SET';
 export const SELL_STATUS = 'sellStatus/SET';
 export const TOPICS = 'topics/SET';
+export const CONTACT_VALUES = 'contactValues/SET';
+export const CONTACT_STATUS = 'contactStatus/SET';
+export const CONTACT_FOCUS = 'contactFocus/SET';
 
 const host = window.location.hostname;
 let root;
@@ -66,6 +69,9 @@ const initialState = {
   filteredList,
   prevItem,
   nextItem,
+  contactValues: ['', '', '', ''],
+  contactStatus: '',
+  contactFocus: null
 };
 
 export default (state = initialState, action) => {
@@ -167,6 +173,24 @@ export default (state = initialState, action) => {
         topicFilters: action.filters,
       };
 
+    case CONTACT_VALUES:
+      return {
+        ...state,
+        contactValues: action.values,
+      };
+
+    case CONTACT_STATUS:
+      return {
+        ...state,
+        contactStatus: action.status,
+      };
+
+    case CONTACT_FOCUS:
+      return {
+        ...state,
+        contactFocus: action.focus,
+      };
+
     default:
       return state
   }
@@ -233,5 +257,26 @@ export const setTopics = dispatch => filters => {
   dispatch({
     type: TOPICS,
     filters,
+  });
+};
+
+export const setContactValues = dispatch => values => {
+  dispatch({
+    type: CONTACT_VALUES,
+    values,
+  });
+};
+
+export const setContactStatus = dispatch => status => {
+  dispatch({
+    type: CONTACT_STATUS,
+    status,
+  });
+};
+
+export const setContactFocus = dispatch => focus => {
+  dispatch({
+    type: CONTACT_FOCUS,
+    focus,
   });
 };
