@@ -89,6 +89,17 @@ class Contact extends Component {
     setContactValues([name.value, email.value, numbers.value, message.value])
   }
 
+  clearValues() {
+    let { name, email, numbers, message } = this.refs;
+
+    name.value = '';
+    email.value = '';
+    numbers.value = '';
+    message.value = '';
+
+    setContactValues(['', '', '', ''])
+  }
+
   saveFocus(name) {
     const { setContactFocus } = this.props;
     
@@ -143,7 +154,7 @@ class Contact extends Component {
 
             if (response.result === "Success.") {
               setContactStatus(STATUS_SUCCESS);
-              setContactValues(['', '', '', ''])
+              this.clearValues()
 
             } else {
               setContactStatus(STATUS_FAIL);
@@ -161,6 +172,7 @@ class Contact extends Component {
         }));
       }
       this.setState(() => ({ fillRequired: '' }))
+
     } else {
       this.setState(() => ({ fillRequired: 'Ole hyvä ja täytä kaikki pakolliset kentät!' }))
     }
