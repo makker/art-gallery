@@ -50,6 +50,9 @@ function SimpleAppBar(props) {
                 Galleria Haili
             </Link>
           </Typography>
+          <Typography color="inherit">
+            Kuvaston pyynnöstä teokset jotka ei ole myynnissä on poistettu!
+          </Typography>
           <Route exact path={root +"piece/:id"} render={() => 
             <Link to={{ pathname: root, search: query }}>
               <IconButton className={classes.gridButton} color="primary" aria-label="Menu">

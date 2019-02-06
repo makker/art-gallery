@@ -49,7 +49,7 @@ const infoOpen = (query.get("info") === "1");
 const frameParam = query.get("frame");
 const virtualFrame = (frameParam !== null) ? parseInt(frameParam, 10) : 0;
 const typeFilter = parseInt(query.get("type"), 10) || 0;
-const sellFilter = parseInt(query.get("sell"), 10) || 0;
+const sellFilter = 2; // = selling  // parseInt(query.get("sell"), 10) || 0;
 const topicFilters = (query.get("topics") && query.get("topics").split(".").map(f => parseInt(f, 10))) || [0];
 
 const initialState = { 
