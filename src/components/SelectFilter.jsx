@@ -10,7 +10,8 @@ import { MenuItem } from 'material-ui/Menu';
 const styles = theme => ({
   formControl: { 
     margin: '0 1vw',
-    maxWidth: '20vw',
+    maxWidth: '33vw',
+    minWidth: '60px',
     [theme.breakpoints.up('md')]: {
       fontSize: 'initial',
     },
@@ -29,6 +30,9 @@ const styles = theme => ({
       fontSize: 'initial',
     },
   },
+  selectMenu: { 
+    paddingBottom: "4px" 
+  }
 });
 
 class SelectFilter extends Component {
@@ -37,7 +41,7 @@ class SelectFilter extends Component {
     const {
       classes,
       className,
-      ratio,
+      direction,
       id,
       label,
       data,
@@ -47,7 +51,8 @@ class SelectFilter extends Component {
       change } = this.props;
 
     const formControlClasses = [classes.formControl, className];
-    if (ratio !== "vertical") {
+    console.log("direction: ", direction);
+    if (direction === "column") {
       formControlClasses.push(classes.formControlVert);
     }
     
@@ -63,7 +68,8 @@ class SelectFilter extends Component {
           multiple={multiple}
           autoWidth={multiple} 
           className={classes.select}
-          style={{ marginTop: 'calc(8px + .4vh)' }}>
+          style={{ marginTop: 'calc(8px + .4vh)' }}
+          classes={{selectMenu: classes.selectMenu }} >
           <MenuItem key={0} value={0}>{ defaultLabel }</MenuItem>
           {data.map((item, index) => (
             <MenuItem key={item.id} value={item.id}>{item.value}</MenuItem>
@@ -75,9 +81,7 @@ class SelectFilter extends Component {
 }
 
 const mapStateToProps = state => {
-  return {
-    ratio: state.app.ratio,
-  };
+  return {};
 };
 
 const mapDispatchToProps = dispatch => {

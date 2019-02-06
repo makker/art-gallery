@@ -9,6 +9,8 @@ import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
 import Grid from 'material-ui/Grid';
 import IconButton from 'material-ui/IconButton';
+import ContactMail from 'material-ui-icons/ContactMail';
+import ArrowBack from 'material-ui-icons/ArrowBack';
 import GridOn from 'material-ui-icons/GridOn';
 
 const styles = theme => ({
@@ -27,8 +29,14 @@ const styles = theme => ({
   flex: {
     flex: 1,
   },
-  gridButton: {
+  contactButton: {
+    width: 'auto',
     marginLeft: 10,
+    marginRight: 0,
+  },
+  gridButton: {
+    width: 'auto',
+    marginLeft: 20,
     marginRight: 0,
   },
   link: {
@@ -40,7 +48,8 @@ const styles = theme => ({
 });
 
 function SimpleAppBar(props) {
-  const { classes, root, query } = props;
+  const { classes, root, query, location } = props;
+
   return (
     <Grid item id="app-bar">
       <AppBar color="default" className={classes.appBar}>
@@ -53,10 +62,22 @@ function SimpleAppBar(props) {
           <Typography color="inherit">
             Kuvaston pyynnöstä teokset jotka ei ole myynnissä on poistettu!
           </Typography>
-          <Route exact path={root +"piece/:id"} render={() => 
+          <Route path={root +"(|piece)"} render={() => 
+            <Link to={{ pathname: root + "contact", search: query, state: { from: location} }}>
+              <IconButton className={classes.gridButton} color="primary" aria-label="Contact" alt="Contact">
+                <ContactMail alt="Contact" />
+              </IconButton>
+            </Link>} />
+          <Route exact path={root +"contact"} render={() => 
+            <Link to={(location.state && location.state.from) || { pathname: root, search: query }}>
+              <IconButton className={classes.gridButton} color="primary" aria-label="Back" alt="Back">
+                <ArrowBack alt="Back" />
+              </IconButton>
+            </Link>} />
+          <Route path={root +"(piece|contact)"} render={() => 
             <Link to={{ pathname: root, search: query }}>
-              <IconButton className={classes.gridButton} color="primary" aria-label="Menu">
-                <GridOn />
+              <IconButton className={classes.gridButton} color="primary" aria-label="Menu" alt="Menu">
+                <GridOn alt="Menu" />
               </IconButton>
             </Link>} />
         </Toolbar>

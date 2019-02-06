@@ -75,6 +75,9 @@ const styles = theme => ({
   scrollInnerColumn: {
     overflowX: 'hidden',
   },
+  scrollInner: {
+    minWidth: 'calc(100% + 17px)',
+  },
   list: {
     // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
     transform: 'translateZ(0)',
@@ -187,7 +190,7 @@ class PaintingList extends Component {
             ...style, ...scrollRootStyles, bottom: '7px', top: '9px',
           }} />;
     const scrollClasses = [];
-    const scrollInnerClasses = [];
+    const scrollInnerClasses = [classes.scrollInner];
 
     switch(direction) {
       case "column":
@@ -237,7 +240,7 @@ class PaintingList extends Component {
           renderThumbVertical={({ style, ...props }) =>
             <div {...props} style={{ ...style, ...scrollThumbStyles }} />
           }
-          renderView={props => <div {...props} className={scrollInnerClasses.join(" ")} id="list" />}> 
+          renderView={props => <div {...props} className={scrollInnerClasses.join(" ")} id="list" data-foo="sdfsd" />}> 
           <GridList className={gridClasses} spacing={0} cellHeight="auto" cols={colCount}>
           { (filteredList.length > 0) ? (
             filteredList.map((tile, index) => (

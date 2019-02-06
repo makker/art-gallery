@@ -21,8 +21,11 @@ const styles = theme => ({
   },
   infoItem: {
     flex: '1 1',
-    fontSize: '0.8em',
+    fontSize: '0.7em',
     padding: '.5vh .5vw',
+    [theme.breakpoints.up('sm')]: {
+      fontSize: '0.8em',
+    },
     [theme.breakpoints.up('md')]: {
       fontSize: '1.1vw',  
     },

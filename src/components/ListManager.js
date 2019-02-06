@@ -44,11 +44,12 @@ class ListManager extends Component {
     setFilteredList(filteredList);
 
     // If active id in filtered list, if not pick 1st from filtered
-    if (path !== "/" && !filteredList.some(p => p.id === activeId)) {
+    if ((path !== "/" && path !== "/contact") && !filteredList.some(p => p.id === activeId)) {
       activeId = filteredList[0] && filteredList[0].id;
       history.push({ pathname: root + "piece/" + activeId, search });
       setActivePiece(activeId);
     }
+    
     const activeIndex = filteredList.findIndex(p => p.id === activeId);
     const prevIndex = activeIndex - 1;
     const nextIndex = activeIndex + 1;
@@ -56,23 +57,24 @@ class ListManager extends Component {
     document.onkeydown = e => {
       e = e || window.event;
 
-      const code = parseInt(e.keyCode, 10);
+      if (path !== "/contact") {
+        const code = parseInt(e.keyCode, 10);
 
-      if (code === 37) {
-        if (prevIndex >= 0) {
-          const prevId = filteredList[prevIndex].id;
-          history.push({ pathname: root +"piece/" + prevId, search: query});
-          setActivePiece(prevId);
-        }
-      } else if (code === 39) {
-        if (nextIndex < filteredList.length) {
-          const nextId = filteredList[nextIndex].id;
-          history.push({ pathname: root +"piece/" + nextId, search: query});
-          setActivePiece(nextId);
+        if (code === 37) {
+          if (prevIndex >= 0) {
+            const prevId = filteredList[prevIndex].id;
+            history.push({ pathname: root +"piece/" + prevId, search: query});
+            setActivePiece(prevId);
+          }
+        } else if (code === 39) {
+          if (nextIndex < filteredList.length) {
+            const nextId = filteredList[nextIndex].id;
+            history.push({ pathname: root +"piece/" + nextId, search: query});
+            setActivePiece(nextId);
+          }
         }
       }
     };
-    
   }
 
   componentDidMount() {

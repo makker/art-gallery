@@ -8,15 +8,18 @@ import { withStyles } from 'material-ui/styles';
 import Grid from 'material-ui/Grid';
 
 import Painting from './Painting';
-import PaintingList from './PaintingList';
 import Navi from './Navi';
-import Filter from './Filter';
 
 const styles = theme => ({
   root: {
     flexGrow: 1,
     flexShrink: 1,
     overflowX: 'hidden',
+  },
+  rootFs: {
+    position: 'absolute',
+    height: '100%',
+    overflowY: 'hidden',
   },
   contentContainer: {
     flexGrow: 1,
@@ -27,9 +30,9 @@ const mapStateToProps = state => {
   // This is not really used
   return {
     root: state.app.root,
-    ratio: state.app.ratio,
     path: state.router.location.pathname,
     match: state.router.match,
+    fullscreenOn: state.app.fullscreenOn,
   };
 };
 
@@ -52,24 +55,21 @@ class VStack extends Component {
   }
   
   render() {
-    const { root, classes, ratio } = this.props;
+    const { children, root, classes, fullscreenOn } = this.props;
+
+    const rootClasses = [classes.root];
+    if (fullscreenOn) rootClasses.push(classes.rootFs);
 
     return (
-      <Grid item container spacing={0} direction="column" className={classes.root} wrap="nowrap">
-        <Route exact path={root} render={() => <PaintingList direction="both" />} />          {/* GRID */}
-
+      <Grid item container spacing={0} direction="column" className={rootClasses.join(" ")} wrap="nowrap">
         <Route exact path={root + "piece/:id"} render={() => ([
           <Grid id="painting-cont" container spacing={0} alignContent="space-between" justify="center" key="painting" className={classes.contentContainer} direction="column" wrap="nowrap">
             <Painting />
             <Navi getPaintingHammer={this.getPaintingHammer} />
           </Grid>, // Painting list when not wide
-          (ratio !== "wide") && <PaintingList direction="row" key="list"></PaintingList>
         ])
         } />
-        
-        { // Painting list when not wide
-          (ratio === "vertical") && <Filter ratio={ratio} />
-        }
+        { children }
       </Grid>
     );
   }

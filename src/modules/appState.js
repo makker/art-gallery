@@ -5,6 +5,7 @@ import ratio, { viewportWidth, viewportHeight } from '../modules/ratio';
 export const RATIO = 'ratio/CHANGE';
 export const ROOT = 'root/SET';
 export const INFOSHEET = 'infoSheet/TOGGLE';
+export const FULLSCREEN = 'fullscreen/TOGGLE';
 export const ACTIVE_PIECE = 'activePiece/SET';
 export const FILTERD_LIST = 'filteredList/SET';
 export const PREV_ITEM = 'prevItem/SET';
@@ -18,6 +19,9 @@ export const TYPE_FILTER = 'typeFilter/SET';
 export const VIRTUAL_FRAME = 'virtualFrame/SET';
 export const SELL_STATUS = 'sellStatus/SET';
 export const TOPICS = 'topics/SET';
+export const CONTACT_VALUES = 'contactValues/SET';
+export const CONTACT_STATUS = 'contactStatus/SET';
+export const CONTACT_FOCUS = 'contactFocus/SET';
 
 const host = window.location.hostname;
 let root;
@@ -29,12 +33,7 @@ switch(host) {
     root = "/art-gallery/";
     break;
 
-  case "localhost":
-  case "gallery.makker.net":
-  case "gallery.makker.net.s3-website.eu-central-1.amazonaws.com":
-  case "haili.s3-website.eu-central-1.amazonaws.com":
-  case "d1c1jb8pememw0.cloudfront.net":
-  case "dirf8i44auhbn.cloudfront.net":
+  default:
     root = "/";
     break;
 }
@@ -55,6 +54,7 @@ const topicFilters = (query.get("topics") && query.get("topics").split(".").map(
 const initialState = { 
   root,
   infoSheetOpen: infoOpen,
+  fullscreenOn: false,
   activePiece: id,
   ratio: ratio(),
   viewportWidth: viewportWidth(),
@@ -69,6 +69,9 @@ const initialState = {
   filteredList,
   prevItem,
   nextItem,
+  contactValues: ['', '', '', ''],
+  contactStatus: '',
+  contactFocus: null
 };
 
 export default (state = initialState, action) => {
@@ -114,6 +117,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         infoSheetOpen: action.open,
+      };
+
+    case FULLSCREEN:
+      return {
+        ...state,
+        fullscreenOn: action.payload,
       };
 
     case ACTIVE_PIECE:
@@ -164,6 +173,24 @@ export default (state = initialState, action) => {
         topicFilters: action.filters,
       };
 
+    case CONTACT_VALUES:
+      return {
+        ...state,
+        contactValues: action.values,
+      };
+
+    case CONTACT_STATUS:
+      return {
+        ...state,
+        contactStatus: action.status,
+      };
+
+    case CONTACT_FOCUS:
+      return {
+        ...state,
+        contactFocus: action.focus,
+      };
+
     default:
       return state
   }
@@ -182,6 +209,13 @@ export const toggleInfoSheet = dispatch => open => {
   dispatch({
       type: INFOSHEET,
       open: open,
+  });
+};
+
+export const toggleFullscreen = dispatch => payload => {
+  dispatch({
+    type: FULLSCREEN,
+    payload,
   });
 };
 
@@ -223,5 +257,26 @@ export const setTopics = dispatch => filters => {
   dispatch({
     type: TOPICS,
     filters,
+  });
+};
+
+export const setContactValues = dispatch => values => {
+  dispatch({
+    type: CONTACT_VALUES,
+    values,
+  });
+};
+
+export const setContactStatus = dispatch => status => {
+  dispatch({
+    type: CONTACT_STATUS,
+    status,
+  });
+};
+
+export const setContactFocus = dispatch => focus => {
+  dispatch({
+    type: CONTACT_FOCUS,
+    focus,
   });
 };
